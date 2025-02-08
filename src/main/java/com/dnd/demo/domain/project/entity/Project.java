@@ -1,13 +1,12 @@
 package com.dnd.demo.domain.project.entity;
 
-import com.dnd.demo.common.entity.BaseEntity;
+import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
 
 @Entity
 public class Project extends BaseEntity {

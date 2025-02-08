@@ -1,6 +1,6 @@
 package com.dnd.demo.domain.Quiz.entity;
 
-import com.dnd.demo.common.entity.BaseEntity;
+import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 

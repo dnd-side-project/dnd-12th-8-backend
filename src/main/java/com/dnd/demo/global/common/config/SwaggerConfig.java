@@ -1,4 +1,4 @@
-package com.dnd.demo.common.config;
+package com.dnd.demo.global.common.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

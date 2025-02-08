@@ -1,4 +1,4 @@
-package com.dnd.demo.common.entity;
+package com.dnd.demo.global.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -19,7 +19,7 @@ abstract public class BaseEntity {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, updatable = true)
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     private String deleteYn = "N";

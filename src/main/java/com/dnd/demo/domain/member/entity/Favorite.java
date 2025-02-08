@@ -1,6 +1,6 @@
 package com.dnd.demo.domain.member.entity;
 
-import com.dnd.demo.common.entity.BaseEntity;
+import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

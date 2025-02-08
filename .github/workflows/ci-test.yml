@@ -1,0 +1,37 @@
+name: CI for Release Branch
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: JDK 설정
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Gradle 빌드 & 테스트 실행
+        run: |
+          chmod +x gradlew
+          ./gradlew test
+
+      - name: 테스트 결과 나타내기
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: '**/build/test-results/test/TEST-*.xml'
+        env:
+          GITHUB_TOKEN: ${{ secrets.TEST_RESULT_TOKEN }}

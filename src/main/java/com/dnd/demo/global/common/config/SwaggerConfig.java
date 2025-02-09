@@ -1,26 +1,43 @@
 package com.dnd.demo.global.common.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
 
-	@Bean
-	public OpenAPI openAPI() {
-		return new OpenAPI()
-			.components(new Components()) // 컴포넌트 설정
-			.info(apiInfo());
-	}
+    @Value("${security.auth.header}")
+    private String authHeader;
 
-	private Info apiInfo() {
-		return new Info()
-			.title("임시 title") // API 타이틀
-			.description("임시 설명") // API 설명
-			.version("1.0.0");
-	}
+    @Bean
+    public OpenAPI openAPI() {
+        // security schema 정의
+        SecurityScheme securityScheme = new SecurityScheme()
+          .type(Type.HTTP)
+          .in(SecurityScheme.In.HEADER)
+          .bearerFormat("JWT")
+          .scheme("bearer")
+          .name(authHeader);
+
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("BearerAuth");
+
+        return new OpenAPI()
+          .components(new Components().addSecuritySchemes("BearerAuth", securityScheme)) // 컴포넌트 설정
+          .info(apiInfo())
+          .addSecurityItem(securityRequirement);
+    }
+
+    private Info apiInfo() {
+        return new Info()
+          .title("98 percents API 명세서") // API 타이틀
+          .description("") // API 설명
+          .version("v1");
+    }
 }

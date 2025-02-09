@@ -16,7 +16,7 @@ public class Favorite extends BaseEntity {
 	private Long favoriteId;
 
 	@Column(nullable = false)
-	private Long memberId;
+	private String memberId;
 
 	@Column(nullable = false)
 	private Long projectId;

@@ -5,6 +5,7 @@ import com.dnd.demo.domain.project.entity.Job;
 import com.dnd.demo.domain.project.entity.Level;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 import com.dnd.demo.global.common.entity.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,30 +24,30 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
-    @Id
-    private String memberId;
+	@Id
+	private String memberId;
 
-    @Enumerated(EnumType.STRING)
-    private Job job;
-    @Enumerated(EnumType.STRING)
-    private Level level;
-    @Enumerated(EnumType.STRING)
-    private Category category;
-    private String email;
-    private Integer points;
-    private String memberName;
-    private String profileUrl = null;
+	@Enumerated(EnumType.STRING)
+	private Job job;
+	@Enumerated(EnumType.STRING)
+	private Level level;
+	@Enumerated(EnumType.STRING)
+	private Category category;
+	private String email;
+	private Integer points;
+	private String memberName;
+	private String profileUrl;
 
-    @Enumerated(EnumType.STRING)
-    private MemberRole role;
+	@Enumerated(EnumType.STRING)
+	private MemberRole role;
 
-    public static Member fromOAuthUserDetails(OAuthUserDetails oAuthUserDetails) {
-        return Member.builder()
-          .memberId(oAuthUserDetails.getMemberId())
-          .memberName(oAuthUserDetails.getMemberName())
-          .profileUrl(oAuthUserDetails.getProfileUrl())
-          .email(oAuthUserDetails.getEmail())
-          .role(oAuthUserDetails.getRole())
-          .build();
-    }
+	public static Member fromOAuthUserDetails(OAuthUserDetails oAuthUserDetails) {
+		return Member.builder()
+			.memberId(oAuthUserDetails.getMemberId())
+			.memberName(oAuthUserDetails.getMemberName())
+			.profileUrl(oAuthUserDetails.getProfileUrl())
+			.email(oAuthUserDetails.getEmail())
+			.role(oAuthUserDetails.getRole())
+			.build();
+	}
 }

@@ -8,8 +8,8 @@ import jakarta.persistence.Id;
 @Entity
 public class ProjectCategory {
 
-    @Id
-    private Long projectId;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+	@Id
+	private Long projectId;
+	@Enumerated(EnumType.STRING)
+	private Category category;
 }

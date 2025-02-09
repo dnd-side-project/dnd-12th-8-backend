@@ -1,15 +1,17 @@
 package com.dnd.demo.domain.project.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class ProjectCategory {
 
-    @Id
-    private Long projectId;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	private Long projectId;
+	private Long categoryId;
 }

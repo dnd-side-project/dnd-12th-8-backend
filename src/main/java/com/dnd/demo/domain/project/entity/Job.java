@@ -1,6 +1,0 @@
-package com.dnd.demo.domain.project.entity;
-
-public enum Job {
-    DEVLOPER,
-    DESIGNER;
-}

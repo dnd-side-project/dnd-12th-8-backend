@@ -26,14 +26,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-      JwtTokenProvider jwtTokenProvider) throws Exception {
+        JwtTokenProvider jwtTokenProvider) throws Exception {
         http
-          .csrf(AbstractHttpConfigurer::disable)
-          .sessionManagement(session ->
-            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-          .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/", "/login", "/oauth2/**").permitAll()
-                  .requestMatchers("/test").hasAnyRole("admin", "user");
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers("/", "/login", "/oauth2/**", "/swagger-ui/**", "/v3/api-docs/**")
+                    .permitAll()
+                    .requestMatchers("/test").hasAnyRole("admin", "user")
+                    .anyRequest().permitAll();
             }
 
           )

@@ -2,7 +2,7 @@ package com.dnd.demo.global.auth.service;
 
 import com.dnd.demo.domain.member.entity.Member;
 import com.dnd.demo.domain.member.entity.MemberRole;
-import com.dnd.demo.domain.member.repository.MemberRespository;
+import com.dnd.demo.domain.member.repository.MemberRepository;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomUserDetailService extends DefaultOAuth2UserService {
 
-    private final MemberRespository memberRespository;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -28,13 +28,13 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
         OAuthUserDetails oAuthUserDetails = OAuthUserDetails.fromSocialLogin(clientRegistrationId,
           oAuth2User);
 
-        Optional<Member> existMember = memberRespository.findById(oAuthUserDetails.getMemberId());
+        Optional<Member> existMember = memberRepository.findById(oAuthUserDetails.getMemberId());
         if (existMember.isPresent()) {
             return OAuthUserDetails.fromMember(existMember.get());
         } else {
             oAuthUserDetails.setRole(MemberRole.PRE_MEMBER);
             Member signUpMember = Member.fromOAuthUserDetails(oAuthUserDetails);
-            memberRespository.save(signUpMember);
+            memberRepository.save(signUpMember);
             return OAuthUserDetails.fromMember(signUpMember);
         }
     }

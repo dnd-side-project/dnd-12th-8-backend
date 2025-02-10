@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class QuizOptionKey {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long optionId;
-    private Long quizId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long optionId;
+	private Long quizId;
 
 }

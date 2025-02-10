@@ -1,15 +1,16 @@
 package com.dnd.demo.domain.Quiz.entity;
 
 import com.dnd.demo.global.common.entity.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 public class QuizResult extends BaseEntity {
 
-    @Id
-    private Long projectId;
+	@Id
+	private Long projectId;
 
-    private Integer participantCount;
-    private Integer passCount;
+	private Integer participantCount;
+	private Integer passCount;
 }

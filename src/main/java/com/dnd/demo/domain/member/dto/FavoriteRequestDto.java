@@ -1,6 +1,7 @@
 package com.dnd.demo.domain.member.dto;
 
 
+import com.dnd.demo.domain.member.entity.Favorite;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,5 +10,11 @@ import lombok.Setter;
 public class FavoriteRequestDto {
 
     private Long projectId;
-    private String memberId;
+
+    public Favorite toEntity(String memberId) {
+        return Favorite.builder()
+          .memberId(memberId)
+          .projectId(this.projectId)
+          .build();
+    }
 }

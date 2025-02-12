@@ -1,6 +1,5 @@
 package com.dnd.demo.domain.member.entity;
 
-import com.dnd.demo.domain.member.dto.FavoriteRequestDto;
 import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,11 +27,5 @@ public class Favorite extends BaseEntity {
 
     @Column(nullable = false)
     private Long projectId;
-
-    public static Favorite fromFavoriteRequestDto(FavoriteRequestDto requestDto) {
-        return Favorite.builder()
-          .memberId(requestDto.getMemberId())
-          .projectId(requestDto.getProjectId())
-          .build();
-    }
+    
 }

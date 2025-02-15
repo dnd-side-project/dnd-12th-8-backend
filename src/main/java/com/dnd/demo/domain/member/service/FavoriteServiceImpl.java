@@ -18,8 +18,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional
     public Long addFavorite(String memberId, FavoriteRequestDto favoriteRequestDto) {
-        favoriteRequestDto.setMemberId(memberId);
-        Favorite favorite = Favorite.fromFavoriteRequestDto(favoriteRequestDto);
+        Favorite favorite = favoriteRequestDto.toEntity(memberId);
 
         Optional<Favorite> existFavorite = favoriteRepository.findByMemberIdAndProjectId(
           favorite.getMemberId(), favorite.getProjectId());

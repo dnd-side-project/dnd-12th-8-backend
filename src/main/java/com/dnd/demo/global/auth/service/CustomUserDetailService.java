@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomUserDetailService extends DefaultOAuth2UserService {
 
-    private final MemberRepository memberRespository;
+    private final MemberRepository memberRepository;
 
     @Override
     @Transactional
@@ -29,13 +29,13 @@ public class CustomUserDetailService extends DefaultOAuth2UserService {
         OAuthUserDetails oAuthUserDetails = OAuthUserDetails.fromSocialLogin(clientRegistrationId,
           oAuth2User);
 
-        Optional<Member> existMember = memberRespository.findById(oAuthUserDetails.getMemberId());
+        Optional<Member> existMember = memberRepository.findById(oAuthUserDetails.getMemberId());
         if (existMember.isPresent()) {
             return OAuthUserDetails.fromMember(existMember.get());
         } else {
             oAuthUserDetails.setRole(MemberRole.PRE_MEMBER);
-            Member signUpMember = Member.fromOAuthUserDetails(oAuthUserDetails);
-            memberRespository.save(signUpMember);
+            Member signUpMember = oAuthUserDetails.toEntity();
+            memberRepository.save(signUpMember);
             return OAuthUserDetails.fromMember(signUpMember);
         }
     }

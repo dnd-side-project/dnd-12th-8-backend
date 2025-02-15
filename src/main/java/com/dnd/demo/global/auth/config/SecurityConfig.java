@@ -32,25 +32,29 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/", "/login", "/oauth2/**", "/swagger-ui/**", "/v3/api-docs/**")
-                    .permitAll()
+                auth.requestMatchers(
+                        "/",
+                        "/login",
+                        "/oauth2/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                    ).permitAll()
                     .requestMatchers("/test").hasAnyRole("admin", "user")
                     .anyRequest().permitAll();
-            }
-
-          )
-          // 테스트용 프론트 페이지 나오면 변경
-          .oauth2Login(oauth2 ->
-            oauth2
-              .userInfoEndpoint(endpoint ->
-                endpoint.userService(customUserDetailService))
-              .successHandler(oAuthSuccessHandler)
-          )
-          .exceptionHandling(exception -> exception.accessDeniedHandler(oAuthAccessDeniedHandler))
-          .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-            UsernamePasswordAuthenticationFilter.class);
+            })
+            .oauth2Login(oauth2 ->
+                oauth2
+                    .userInfoEndpoint(endpoint ->
+                        endpoint.userService(customUserDetailService))
+                    .successHandler(oAuthSuccessHandler)
+            )
+            .exceptionHandling(exception -> exception.accessDeniedHandler(oAuthAccessDeniedHandler))
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 }
+

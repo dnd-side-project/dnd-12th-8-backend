@@ -2,18 +2,36 @@ package com.dnd.demo.domain.feedback.dto.request;
 
 import java.util.List;
 
-import com.dnd.demo.domain.feedback.entity.FeedbackForm;
+import com.dnd.demo.domain.feedback.entity.FeedbackQuestion;
+import com.dnd.demo.domain.project.enums.QuestionType;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public record FeedbackFormRequest(
-	List<FeedbackQuestionRequest> feedbackQuestions
+
+	String question,
+	QuestionType type,
+	List<@NotBlank(message = "객관식 질문의 보기는 필수 입력 항목입니다.") String> options,
+
+	@Pattern(regexp = "^(http|https)://.*$", message = "A/B 테스트 이미지 A는 유효한 URL 형식이어야 합니다.")
+	String abImageAUrl,
+
+	@Pattern(regexp = "^(http|https)://.*$", message = "A/B 테스트 이미지 B는 유효한 URL 형식이어야 합니다.")
+	String abImageBUrl,
+
+	boolean isRequired,
+	Integer timeLimit
 ) {
-	public FeedbackForm toEntity(Long projectId) {
-		return FeedbackForm.builder()
-			.projectId(projectId)
-			.questions((feedbackQuestions != null ? feedbackQuestions : List.<FeedbackQuestionRequest>of())
-				.stream()
-				.map(FeedbackQuestionRequest::toEntity)
-				.toList())
+	public FeedbackQuestion toEntity() {
+		return FeedbackQuestion.builder()
+			.question(question)
+			.type(type)
+			.options(options != null ? options : List.of())
+			.abImageAUrl(abImageAUrl)
+			.abImageBUrl(abImageBUrl)
+			.isRequired(isRequired)
+			.timeLimit(timeLimit)
 			.build();
 	}
 }

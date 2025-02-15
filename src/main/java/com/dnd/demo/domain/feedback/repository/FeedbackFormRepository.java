@@ -8,4 +8,5 @@ import com.dnd.demo.domain.feedback.entity.FeedbackForm;
 @Repository
 public interface FeedbackFormRepository extends MongoRepository<FeedbackForm, String> {
 
+	void deleteByProjectId(Long id);
 }

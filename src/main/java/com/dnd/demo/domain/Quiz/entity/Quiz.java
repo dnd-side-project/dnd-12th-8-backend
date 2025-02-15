@@ -25,6 +25,6 @@ public class Quiz extends BaseEntity {
 
 	private Long projectId;
 	private String question;
-	private Long correctOptionId;
+	private String answer;
 
 }

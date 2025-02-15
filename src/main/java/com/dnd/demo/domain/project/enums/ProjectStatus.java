@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Status {
+public enum ProjectStatus {
 	TEMPORARY("임시저장"),
 	OPEN("공개"),
 	CLOSED("마감");

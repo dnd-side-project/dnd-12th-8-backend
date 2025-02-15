@@ -13,6 +13,9 @@ public enum ErrorCode {
     //Member
     MEMBER_NOT_FOUND(NOT_FOUND, "사용자가 존재하지 않습니다"),
 
+    //Category
+    CATEGORY_NOT_FOUND(NOT_FOUND,"카테고리가 존재하지 않습니다"),
+
     ;
 
     private final HttpStatus httpStatus;

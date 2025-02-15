@@ -32,10 +32,11 @@ public class SecurityConfig {
           .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
           .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/", "/login", "/oauth2/**").permitAll()
-                  .requestMatchers("/test").hasAnyRole("admin", "user");
+                auth.requestMatchers("/", "/login", "/oauth2/**", "/swagger-ui/**", "/v3/api-docs/**")
+                  .permitAll()
+                  .requestMatchers("/test").hasAnyRole("admin", "user")
+                  .anyRequest().permitAll();
             }
-
           )
           // 테스트용 프론트 페이지 나오면 변경
           .oauth2Login(oauth2 ->

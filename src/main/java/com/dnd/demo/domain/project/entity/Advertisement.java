@@ -6,8 +6,8 @@ import jakarta.persistence.Id;
 @Entity
 public class Advertisement {
 
-    @Id
-    private Long projectId;
-    private String startDate;
-    private String endDate;
+	@Id
+	private Long projectId;
+	private String startDate;
+	private String endDate;
 }

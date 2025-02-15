@@ -19,13 +19,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-@Setter
+
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class OAuthUserDetails implements OAuth2User {
-
 
     private String memberId;
     @Enumerated(EnumType.STRING)
@@ -45,7 +45,6 @@ public class OAuthUserDetails implements OAuth2User {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-
     @Override
     public Map<String, Object> getAttributes() {
         return Map.of();
@@ -54,7 +53,7 @@ public class OAuthUserDetails implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(
-          new SimpleGrantedAuthority(role.toString())
+          new SimpleGrantedAuthority("ROLE_" + role)
         );
     }
 
@@ -100,6 +99,16 @@ public class OAuthUserDetails implements OAuth2User {
           .email(email)
           .memberName(memberName)
           .profileUrl(profileUrl)
+          .build();
+    }
+
+    public Member toEntity() {
+        return Member.builder()
+          .memberId(memberId)
+          .memberName(memberName)
+          .profileUrl(profileUrl)
+          .email(email)
+          .role(role)
           .build();
     }
 }

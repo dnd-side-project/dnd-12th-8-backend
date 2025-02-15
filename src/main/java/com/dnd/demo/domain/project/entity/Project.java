@@ -7,8 +7,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Project extends BaseEntity {
 
     @Id
@@ -28,7 +30,8 @@ public class Project extends BaseEntity {
     private Level targetLevel;
     private String logoImgUrl;
     private String thumbnailImgUrl;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     private Integer participantCount;
     private Integer favoriteCount;
     private String projectMembers;

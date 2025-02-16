@@ -21,7 +21,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
         return queryFactory.select(project)
           .from(project)
           .join(favorite)
-          .on(project.id.eq(favorite.projectId))
+          .on(project.projectId.eq(favorite.projectId))
           .where(favorite.memberId.eq(memberId))
           .orderBy(favorite.createdAt.desc())
           .fetch();

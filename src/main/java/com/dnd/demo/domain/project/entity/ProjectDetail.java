@@ -24,7 +24,7 @@ public class ProjectDetail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long projectDetailId;
 
     private Long projectId;
 

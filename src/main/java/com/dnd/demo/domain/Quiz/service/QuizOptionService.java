@@ -27,7 +27,7 @@ public class QuizOptionService {
 			.mapToObj(i -> Optional.ofNullable(quizRequests)
 				.orElseGet(Collections::emptyList)
 				.get(i)
-				.toQuizOptions(quizzes.get(i).getId()))
+				.toQuizOptions(quizzes.get(i).getQuizId()))
 			.flatMap(List::stream)
 			.toList();
 
@@ -35,7 +35,7 @@ public class QuizOptionService {
 	}
 
 	public void deleteByQuizIds(List<Quiz> quizzes) {
-		List<Long> quizIds = quizzes.stream().map(Quiz::getId).toList();
+		List<Long> quizIds = quizzes.stream().map(Quiz::getQuizId).toList();
 		quizOptionRepository.deleteByQuizIdIn(quizIds);
 	}
 }

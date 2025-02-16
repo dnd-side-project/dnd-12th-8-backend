@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class FeedbackForm {
 
 	@Id
-	private String id;
+	private String feedbackFormId;
 
 	private Long projectId;
 

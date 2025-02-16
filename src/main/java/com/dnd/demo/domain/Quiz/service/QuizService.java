@@ -25,13 +25,13 @@ public class QuizService {
 		List<Quiz> quizzes = Optional.ofNullable(requests)
 			.orElseGet(Collections::emptyList)
 			.stream()
-			.map(request -> request.toEntity(project.getId()))
+			.map(request -> request.toEntity(project.getProjectId()))
 			.toList();
 
 		return quizRepository.saveAll(quizzes);
 	}
 
 	public List<Quiz> deleteByProjectId(Project project) {
-		return quizRepository.deleteByProjectId(project.getId());
+		return quizRepository.deleteByProjectId(project.getProjectId());
 	}
 }

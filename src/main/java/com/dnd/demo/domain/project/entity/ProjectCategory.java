@@ -19,7 +19,7 @@ public class ProjectCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long projectCategoryId;
 
 	private Long projectId;
 	private Long categoryId;

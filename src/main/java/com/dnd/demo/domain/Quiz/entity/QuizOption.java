@@ -2,7 +2,6 @@ package com.dnd.demo.domain.Quiz.entity;
 
 import com.dnd.demo.global.common.entity.BaseEntity;
 
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +21,7 @@ public class QuizOption extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long optionId;
+    private Long quizOptionId;
 
     private Long quizId;
     private String text;

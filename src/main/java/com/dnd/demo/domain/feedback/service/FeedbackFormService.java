@@ -30,7 +30,7 @@ public class FeedbackFormService {
 			.toList();
 
 		FeedbackForm feedbackForm = FeedbackForm.builder()
-			.projectId(project.getId())
+			.projectId(project.getProjectId())
 			.questions(feedbackQuestions)
 			.build();
 
@@ -39,6 +39,6 @@ public class FeedbackFormService {
 
 
 	public void deleteByProjectId(Project project) {
-		feedbackFormRepository.deleteByProjectId(project.getId());
+		feedbackFormRepository.deleteByProjectId(project.getProjectId());
 	}
 }

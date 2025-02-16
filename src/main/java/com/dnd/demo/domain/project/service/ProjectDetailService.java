@@ -25,13 +25,13 @@ public class ProjectDetailService {
 		List<ProjectDetail> projectDetails = Optional.ofNullable(projectDetailRequests)
 			.orElseGet(Collections::emptyList)
 			.stream()
-			.map(request -> request.toEntity(project.getId()))
+			.map(request -> request.toEntity(project.getProjectId()))
 			.toList();
 
 		projectDetailRepository.saveAll(projectDetails);
 	}
 
 	public void deleteByProjectId(Project project) {
-		projectDetailRepository.deleteByProjectId(project.getId());
+		projectDetailRepository.deleteByProjectId(project.getProjectId());
 	}
 }

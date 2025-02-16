@@ -21,7 +21,7 @@ public class Quiz extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long quizId;
 
 	private Long projectId;
 	private String question;

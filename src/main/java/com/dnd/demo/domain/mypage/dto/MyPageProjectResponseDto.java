@@ -18,7 +18,7 @@ public class MyPageProjectResponseDto {
 
     public static MyPageProjectResponseDto fromProject(Project project) {
         return MyPageProjectResponseDto.builder()
-          .projectId(project.getId())
+          .projectId(project.getProjectId())
           .title(project.getTitle())
           .logoImgUrl(project.getLogoImgUrl())
           .thumbnailImgUrl(project.getThumbnailImgUrl())

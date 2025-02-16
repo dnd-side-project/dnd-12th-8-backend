@@ -1,5 +1,6 @@
 package com.dnd.demo.domain.member.service;
 
+
 import com.dnd.demo.domain.member.dto.CommentDto;
 import com.dnd.demo.domain.member.entity.QComment;
 import com.dnd.demo.domain.member.entity.QMember;
@@ -28,10 +29,10 @@ public class CommentQueryDslRepositoryImpl implements CommentQueryDslRepository 
           )
           .from(project)
           .join(comment)
-          .on(project.id.eq(comment.projectId))
+          .on(project.projectId.eq(comment.projectId))
           .join(member)
           .on(comment.memberId.eq(member.memberId))
-          .where(project.id.eq(projectId))
+          .where(project.projectId.eq(projectId))
           .orderBy(comment.createdAt.asc())
           .fetch();
     }

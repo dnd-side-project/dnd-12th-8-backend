@@ -12,7 +12,7 @@ public record FeedbackFormRequest(
 
 	String question,
 	QuestionType type,
-	List<@NotBlank(message = "객관식 질문의 보기는 필수 입력 항목입니다.") String> options,
+	List<String> options,
 
 	@Pattern(regexp = "^(http|https)://.*$", message = "A/B 테스트 이미지 A는 유효한 URL 형식이어야 합니다.")
 	String abImageAUrl,

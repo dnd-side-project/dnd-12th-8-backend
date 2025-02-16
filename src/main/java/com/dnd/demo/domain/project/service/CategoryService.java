@@ -24,7 +24,7 @@ public class CategoryService {
 
 		List<Long> existingCategoryIds = categoryRepository.findAllById(categoryIds)
 			.stream()
-			.map(Category::getId)
+			.map(Category::getCategoryId)
 			.toList();
 
 		List<Long> invalidCategoryIds = categoryIds.stream()

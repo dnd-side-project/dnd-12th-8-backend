@@ -2,7 +2,7 @@ package com.dnd.demo.domain.project.entity;
 
 import java.util.Optional;
 
-import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.request.ProjectSaveRequest;
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.enums.Level;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
@@ -29,7 +29,7 @@ public class Project extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long projectId;
 
 	private String memberId;
 	private String logoImgUrl;
@@ -47,7 +47,7 @@ public class Project extends BaseEntity {
 	private Integer participantCount;
 	private Integer favoriteCount;
 
-	public void updateFromRequest(ProjectCreateRequest request) {
+	public void updateFromRequest(ProjectSaveRequest request) {
 		this.logoImgUrl = Optional.ofNullable(request.logoImgUrl()).orElse(this.logoImgUrl);
 		this.title = Optional.ofNullable(request.title()).orElse(this.title);
 		this.description = Optional.ofNullable(request.description()).orElse(this.description);

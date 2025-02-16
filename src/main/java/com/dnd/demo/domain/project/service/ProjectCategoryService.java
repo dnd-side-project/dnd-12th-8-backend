@@ -3,7 +3,6 @@ package com.dnd.demo.domain.project.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +27,13 @@ public class ProjectCategoryService {
 		// categoryService.validateCategoryIds(platformCategoryRequest.categoryIds());
 
 		List<ProjectCategory> newCategories = newCategoryIds.stream()
-			.map(categoryId -> ProjectCategory.create(project.getId(), categoryId))
+			.map(categoryId -> ProjectCategory.create(project.getProjectId(), categoryId))
 			.toList();
 
 		projectCategoryRepository.saveAll(newCategories);
 	}
 
 	public void deleteByProjectId(Project project) {
-		projectCategoryRepository.deleteByProjectId(project.getId());
+		projectCategoryRepository.deleteByProjectId(project.getProjectId());
 	}
 }

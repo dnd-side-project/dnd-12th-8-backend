@@ -1,9 +1,12 @@
 package com.dnd.demo.global.auth.util;
 
+import com.dnd.demo.domain.member.dto.TokenDto;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,11 +33,16 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token-expire-length}")
     private long tokenValidMillisecond;
 
+    @Value("${security.jwt.refresh-token-expire-length}")
+    private long refreshTokenValidMillisecond;
+
     @Value("${security.auth.header}")
     private String authHeader;
 
     @Value("${security.claim.header}")
     private String claimHeader;
+
+    private long threeDays = 3 * 24 * 60 * 60 * 1000;
 
     @PostConstruct
     public void init() {
@@ -42,7 +50,7 @@ public class JwtTokenProvider {
     }
 
     // TODO) claim에 어떤 값 들어갈지
-    public String createToken(String memberId, Collection<? extends GrantedAuthority> role) {
+    public TokenDto createToken(String memberId, Collection<? extends GrantedAuthority> role) {
         Date now = new Date();
 
         String accessToken = Jwts.builder()
@@ -53,7 +61,17 @@ public class JwtTokenProvider {
           .signWith(secretKey, Jwts.SIG.HS256)
           .compact();
 
-        return accessToken;
+        String refreshToken = Jwts.builder()
+          .subject(memberId)
+          .expiration(new Date(now.getTime() + refreshTokenValidMillisecond))
+          .signWith(secretKey, Jwts.SIG.HS256)
+          .compact();
+
+        return TokenDto.builder()
+          .grantType("Bearer")
+          .accessToken(accessToken)
+          .refreshToken(refreshToken)
+          .build();
     }
 
     // 토큰 복호화하여 검증
@@ -74,6 +92,70 @@ public class JwtTokenProvider {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    public String resolveRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    // token 재발급 (쿠키저장 방식) => TODO) redis 저장으로 변경
+    public TokenDto reissueToken(HttpServletRequest request, String refreshToken) {
+        String oldTAccessToken = resolveToken(request);
+        Claims claims = Jwts.parser().verifyWith(secretKey).build()
+          .parseSignedClaims(oldTAccessToken)
+          .getPayload();
+
+        String memberId = claims.getSubject();
+
+        Date now = new Date();
+
+        String accessToken = Jwts.builder()
+          .claim(claimHeader, claims.get(claimHeader))
+          .subject(memberId)
+          .issuedAt(now)
+          .expiration(new Date(now.getTime() + tokenValidMillisecond))
+          .signWith(secretKey, Jwts.SIG.HS256)
+          .compact();
+
+        if (refreshTokenValidCheck(refreshToken)) {
+            refreshToken = Jwts.builder()
+              .subject(memberId)
+              .issuedAt(now)
+              .expiration(new Date(now.getTime() + refreshTokenValidMillisecond))
+              .signWith(secretKey, Jwts.SIG.HS256)
+              .compact();
+        }
+
+        return TokenDto.builder()
+          .grantType("Bearer")
+          .accessToken(accessToken)
+          .refreshToken(refreshToken)
+          .build();
+    }
+
+    public boolean refreshTokenValidCheck(String refreshToken) {
+        Jws<Claims> claimsJws = Jwts.parser().verifyWith(secretKey).build()
+          .parseSignedClaims(refreshToken);
+        long now = (new Date()).getTime();
+        long refresh_expiredTime = claimsJws.getPayload().getExpiration().getTime();
+        long refresh_nowTime = new Date(now + refreshTokenValidMillisecond).getTime();
+
+        return refresh_nowTime - refresh_expiredTime > threeDays;
+    }
+
+    public Cookie getRefreshTokenCookie(String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7);
+        return refreshTokenCookie;
     }
 
     // Filter 에 넘길 Authentication(권한 존재여부 체크)

@@ -1,37 +1,40 @@
 package com.dnd.demo.global.auth.handler;
 
+import com.dnd.demo.domain.member.dto.TokenDto;
+import com.dnd.demo.global.auth.util.JwtTokenProvider;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import com.dnd.demo.global.auth.util.JwtTokenProvider;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
-	private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-	@Value("${security.auth.header}")
-	private String authHeader;
+    @Value("${security.auth.header}")
+    private String authHeader;
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException, ServletException {
-		String accessToken = jwtTokenProvider.createToken(authentication.getName(),
-			authentication.getAuthorities());
-		response.setHeader(authHeader, "Bearer " + accessToken);
-		response.sendRedirect("/");
-	}
 
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+      Authentication authentication) throws IOException, ServletException {
+        TokenDto token = jwtTokenProvider.createToken(authentication.getName(),
+          authentication.getAuthorities());
+        response.setHeader(authHeader, token.grantType() + " " + token.accessToken());
+
+        Cookie cookie = jwtTokenProvider.getRefreshTokenCookie(token.refreshToken());
+        response.addCookie(cookie);
+
+        response.sendRedirect("/"); // callback URL
+    }
 }

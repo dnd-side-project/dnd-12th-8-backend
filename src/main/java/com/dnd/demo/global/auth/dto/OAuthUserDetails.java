@@ -5,6 +5,7 @@ import com.dnd.demo.domain.member.entity.MemberRole;
 import com.dnd.demo.domain.project.entity.Category;
 import com.dnd.demo.domain.project.entity.Job;
 import com.dnd.demo.domain.project.entity.Level;
+import io.jsonwebtoken.Claims;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.util.Collection;
@@ -101,6 +102,13 @@ public class OAuthUserDetails implements OAuth2User {
           .profileUrl(profileUrl)
           .build();
     }
+
+    public static OAuthUserDetails fromToken(Claims claims) {
+        return OAuthUserDetails.builder()
+          .memberId(claims.getSubject())
+          .build();
+    }
+
 
     public Member toEntity() {
         return Member.builder()

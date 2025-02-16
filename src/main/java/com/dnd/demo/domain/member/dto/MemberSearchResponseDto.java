@@ -9,7 +9,9 @@ import lombok.Builder;
 public record MemberSearchResponseDto(
   String email,
   Job job,
-  Level level
+  Level level,
+  String profileUrl,
+  String memberName
 ) {
 
     public static MemberSearchResponseDto fromEntity(Member member) {
@@ -17,6 +19,8 @@ public record MemberSearchResponseDto(
           .email(member.getEmail())
           .job(member.getJob())
           .level(member.getLevel())
+          .profileUrl(member.getProfileUrl())
+          .memberName(member.getMemberName())
           .build();
     }
 

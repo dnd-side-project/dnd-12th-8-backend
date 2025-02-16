@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProjectDetailKey {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long detailId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long detailId;
 
-    private Long projectId;
+	private Long projectId;
 }

@@ -1,8 +1,9 @@
 package com.dnd.demo.domain.member.entity;
 
+import com.dnd.demo.domain.project.entity.Category;
+
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.enums.Level;
-import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,22 +31,12 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Level level;
     // @Enumerated(EnumType.STRING)
-    // private Category category;
+    // private MemberCategory category;
     private String email;
     private Integer points;
     private String memberName;
-    private String profileUrl = null;
+    private String profileUrl;
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
-
-    public static Member fromOAuthUserDetails(OAuthUserDetails oAuthUserDetails) {
-        return Member.builder()
-          .memberId(oAuthUserDetails.getMemberId())
-          .memberName(oAuthUserDetails.getMemberName())
-          .profileUrl(oAuthUserDetails.getProfileUrl())
-          .email(oAuthUserDetails.getEmail())
-          .role(oAuthUserDetails.getRole())
-          .build();
-    }
 }

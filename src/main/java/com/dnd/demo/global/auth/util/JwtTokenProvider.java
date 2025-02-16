@@ -33,6 +33,9 @@ public class JwtTokenProvider {
     @Value("${security.auth.header}")
     private String authHeader;
 
+    @Value("${security.claim.header}")
+    private String claimHeader;
+
     @PostConstruct
     public void init() {
         this.secretKey = new SecretKeySpec(key.getBytes(), "HmacSHA256");
@@ -43,7 +46,7 @@ public class JwtTokenProvider {
         Date now = new Date();
 
         String accessToken = Jwts.builder()
-          .claim("role", role)
+          .claim(claimHeader, role)
           .subject(memberId)
           .issuedAt(now)
           .expiration(new Date(now.getTime() + tokenValidMillisecond))
@@ -78,7 +81,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
           .getPayload();
 
-        if (claims.get("role") == null) {
+        if (claims.get(claimHeader) == null) {
             throw new RuntimeException("권한이 없습니다.");
         }
 
@@ -87,7 +90,7 @@ public class JwtTokenProvider {
         userDetails.setEmail(claims.get("email", String.class));
 
         Collection<? extends GrantedAuthority> authorities =
-          Arrays.stream(claims.get("role").toString().split(","))
+          Arrays.stream(claims.get(claimHeader).toString().split(","))
             .map(SimpleGrantedAuthority::new)
             .toList();
 

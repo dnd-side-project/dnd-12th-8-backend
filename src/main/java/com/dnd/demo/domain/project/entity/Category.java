@@ -23,4 +23,3 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private PlatformType type;
 }
-

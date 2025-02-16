@@ -11,11 +11,14 @@ import com.dnd.demo.domain.Quiz.service.QuizOptionService;
 import com.dnd.demo.domain.Quiz.service.QuizService;
 import com.dnd.demo.domain.feedback.service.FeedbackFormService;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.request.ProjectSaveRequest;
+import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
 import com.dnd.demo.domain.project.repository.ProjectRepository;
+import com.dnd.demo.global.exception.CustomException;
+import com.dnd.demo.global.exception.ErrorCode;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,26 +33,51 @@ public class ProjectService {
 	private final FeedbackFormService feedbackFormService;
 
 	@Transactional
-	public Long createProject(String memberId, ProjectCreateRequest request) {
-		Optional<Project> existingProject = projectRepository.findByMemberIdAndProjectStatus(memberId, ProjectStatus.TEMPORARY);
+	public Long saveTemporaryProject(String memberId, TemporaryProjectCreateRequest request) {
+		Optional<Project> existingProject = projectRepository.findByMemberId(memberId);
+		validateProjectFinalUpload(existingProject);
 
-		boolean isNewProject = existingProject.isEmpty();
 		Project project = existingProject
 			.map(existing -> {
 				existing.updateFromRequest(request);
-				if(!request.isDraft()){
-					existing.changeStatusToOpen();
-				}
 				return existing;
 			})
 			.orElseGet(() -> request.toEntity(memberId));
 
-		if (!isNewProject) {
+		if (existingProject.isPresent()) {
 			clearProjectData(project);
 		}
 
 		saveProjectData(request, project);
-		return project.getId();
+		return project.getProjectId();
+	}
+
+	@Transactional
+	public Long createFinalProject(String memberId, ProjectCreateRequest request) {
+		Optional<Project> existingProject = projectRepository.findByMemberId(memberId);
+		validateProjectFinalUpload(existingProject);
+
+		Project project = existingProject
+			.filter(proj -> proj.getProjectStatus() == ProjectStatus.TEMPORARY)
+			.map(existing -> {
+				existing.updateFromRequest(request);
+				existing.changeStatusToOpen();
+				return existing;
+			})
+			.orElseGet(() -> request.toEntity(memberId));
+
+		if (existingProject.isPresent()) {
+			clearProjectData(project);
+		}
+
+		saveProjectData(request, project);
+		return project.getProjectId();
+	}
+
+	private void validateProjectFinalUpload(Optional<Project> existingProject) {
+		if (existingProject.isPresent() && existingProject.get().getProjectStatus() == ProjectStatus.OPEN) {
+			throw new CustomException(ErrorCode.PROJECT_FINAL_CREATE_ALREADY_UPLOAD);
+		}
 	}
 
 	@Transactional
@@ -63,7 +91,7 @@ public class ProjectService {
 		feedbackFormService.deleteByProjectId(project);
 	}
 
-	private void saveProjectData(ProjectCreateRequest request, Project project) {
+	private void saveProjectData(ProjectSaveRequest request, Project project) {
 		projectRepository.save(project);
 
 		projectCategoryService.saveByProjectId(project, request.platformCategories());

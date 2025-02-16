@@ -16,6 +16,9 @@ public enum ErrorCode {
     //Category
     CATEGORY_NOT_FOUND(NOT_FOUND,"카테고리가 존재하지 않습니다"),
 
+    //Project
+    PROJECT_FINAL_CREATE_ALREADY_UPLOAD(BAD_REQUEST, "이미 최종 업로드한 프로젝트입니다."),
+
     ;
 
     private final HttpStatus httpStatus;

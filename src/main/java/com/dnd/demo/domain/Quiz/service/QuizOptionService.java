@@ -38,4 +38,11 @@ public class QuizOptionService {
 		List<Long> quizIds = quizzes.stream().map(Quiz::getQuizId).toList();
 		quizOptionRepository.deleteByQuizIdIn(quizIds);
 	}
+
+	@Transactional(readOnly = true)
+	public List<QuizOption> getQuizOptionsByQuizId(Long quizId) {
+		return Optional.ofNullable(quizOptionRepository.findByQuizId(quizId))
+			.orElse(Collections.emptyList());
+	}
+
 }

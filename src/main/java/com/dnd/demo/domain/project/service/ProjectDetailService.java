@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.demo.domain.project.dto.request.ProjectDetailRequest;
+import com.dnd.demo.domain.project.dto.response.ProjectDetailResponse;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.entity.ProjectDetail;
 import com.dnd.demo.domain.project.repository.ProjectDetailRepository;
@@ -34,4 +35,14 @@ public class ProjectDetailService {
 	public void deleteByProjectId(Project project) {
 		projectDetailRepository.deleteByProjectId(project.getProjectId());
 	}
+
+	@Transactional(readOnly = true)
+	public List<ProjectDetailResponse> getProjectDetailsByProjectId(Long projectId) {
+		return Optional.ofNullable(projectDetailRepository.findByProjectId(projectId))
+			.orElse(Collections.emptyList())
+			.stream()
+			.map(ProjectDetailResponse::from)
+			.toList();
+	}
+
 }

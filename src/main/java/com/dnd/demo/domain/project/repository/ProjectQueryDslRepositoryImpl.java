@@ -7,10 +7,13 @@ import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.entity.QProject;
 import com.dnd.demo.domain.project.entity.QProjectCategory;
 import com.dnd.demo.domain.project.enums.Job;
+import com.dnd.demo.domain.project.enums.ProjectStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -42,6 +45,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
         List<Project> projects = queryFactory
             .selectFrom(project)
             .leftJoin(favorite).on(project.projectId.eq(favorite.projectId))
+            .where(project.projectStatus.eq(ProjectStatus.OPEN))
             .groupBy(project.projectId)
             .orderBy(
                 favorite.count().desc(),
@@ -54,6 +58,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
 
         return new PageImpl<>(projects, pageable, projects.size());
     }
+
 
     @Override
     public Page<Project> findRecommendedProjects(String memberId, Pageable pageable) {
@@ -69,6 +74,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
             .leftJoin(QProjectCategory.projectCategory)
             .on(QProject.project.projectId.eq(QProjectCategory.projectCategory.projectId))
             .where(
+                QProject.project.projectStatus.eq(ProjectStatus.OPEN),
                 QProject.project.targetJob.eq(member.getJob()),
                 QProject.project.targetLevel.eq(member.getLevel()),
                 QProjectCategory.projectCategory.categoryId.in(getCategoryIds(memberId))
@@ -84,9 +90,12 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
         return new PageImpl<>(projects, pageable, projects.size());
     }
 
+
     @Override
     public Page<Project> searchProjects(String query, Job job, List<Long> categoryIds, Pageable pageable) {
         BooleanBuilder where = new BooleanBuilder();
+
+        where.and(QProject.project.projectStatus.eq(ProjectStatus.OPEN));
 
         if (query != null && !query.isBlank()) {
             where.and(QProject.project.title.containsIgnoreCase(query)
@@ -117,6 +126,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
         return new PageImpl<>(projects, pageable, projects.size());
     }
 
+
     private List<Long> getCategoryIds(String memberId) {
         return queryFactory
             .select(QProjectCategory.projectCategory.categoryId)
@@ -127,5 +137,19 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
                     .where(QProject.project.memberId.eq(memberId))
             ))
             .fetch();
+    }
+
+    @Override
+    public Optional<Project> findLatestTemporaryProjectByMemberId(String memberId) {
+        Project result = queryFactory
+            .selectFrom(project)
+            .where(
+                project.memberId.eq(memberId),
+                project.projectStatus.eq(ProjectStatus.TEMPORARY)
+            )
+            .orderBy(project.createdAt.desc())
+            .fetchFirst();
+
+        return Optional.ofNullable(result);
     }
 }

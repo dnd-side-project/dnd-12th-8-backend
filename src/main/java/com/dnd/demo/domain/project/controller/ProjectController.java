@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import com.dnd.demo.common.dto.ApiResponse;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
+import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.service.ProjectService;
@@ -83,4 +85,18 @@ public class ProjectController {
 		return ResponseEntity.ok(projectService.searchProjects(query, job, categories, pageable));
 	}
 
+	@Operation(summary = "프로젝트 상세 조회", description = "현재는 최종 저장, 임시 저장 되어있는 글 모두 조회 됩니다.")
+	@GetMapping("/{projectId}")
+	public ResponseEntity<ProjectResponseDto> getProjectDetail(@PathVariable Long projectId) {
+		return ResponseEntity.ok(projectService.getProjectDetail(projectId));
+	}
+
+	@Operation(summary = "프로젝트 삭제", description = "특정 프로젝트를 삭제합니다.")
+	@DeleteMapping("/{projectId}")
+	public ResponseEntity<ApiResponse<Void>> deleteProject(
+		@PathVariable Long projectId,
+		@AuthenticationPrincipal OAuthUserDetails oAuthUserDetails) {
+		projectService.deleteProject(oAuthUserDetails.getMemberId(), projectId);
+		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 삭제 성공", null));
+	}
 }

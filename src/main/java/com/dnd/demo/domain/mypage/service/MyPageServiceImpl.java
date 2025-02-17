@@ -2,6 +2,7 @@ package com.dnd.demo.domain.mypage.service;
 
 import com.dnd.demo.domain.mypage.dto.MyPageProjectResponseDto;
 import com.dnd.demo.domain.project.entity.Status;
+import com.dnd.demo.domain.project.enums.ProjectStatus;
 import com.dnd.demo.domain.project.repository.ProjectQueryDslRepository;
 import com.dnd.demo.domain.project.repository.ProjectRepository;
 import java.util.List;
@@ -33,7 +34,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     public List<MyPageProjectResponseDto> getMyPageTempProjectList(String memberId) {
-        return projectRepository.findByMemberIdAndStatus(memberId, Status.TEMP)
+        return projectRepository.findByMemberIdAndProjectStatus(memberId, ProjectStatus.TEMPORARY)
           .stream().map(MyPageProjectResponseDto::fromProject)
           .toList();
     }

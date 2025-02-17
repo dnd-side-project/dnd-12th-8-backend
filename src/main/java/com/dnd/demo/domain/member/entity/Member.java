@@ -1,8 +1,9 @@
 package com.dnd.demo.domain.member.entity;
 
 import com.dnd.demo.domain.project.entity.Category;
-import com.dnd.demo.domain.project.entity.Job;
-import com.dnd.demo.domain.project.entity.Level;
+
+import com.dnd.demo.domain.project.enums.Job;
+import com.dnd.demo.domain.project.enums.Level;
 import com.dnd.demo.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,8 +30,8 @@ public class Member extends BaseEntity {
     private Job job;
     @Enumerated(EnumType.STRING)
     private Level level;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    // @Enumerated(EnumType.STRING)
+    // private MemberCategory category;
     private String email;
     private Integer points;
     private String memberName;

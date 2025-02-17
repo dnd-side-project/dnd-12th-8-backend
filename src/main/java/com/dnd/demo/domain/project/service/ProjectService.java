@@ -15,7 +15,11 @@ import com.dnd.demo.domain.feedback.service.FeedbackFormService;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.ProjectSaveRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.response.PlatformCategoryResponse;
+import com.dnd.demo.domain.project.dto.response.ProjectDetailResponse;
+import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
+import com.dnd.demo.domain.Quiz.dto.response.QuizResponse;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
@@ -40,7 +44,7 @@ public class ProjectService {
 
 	@Transactional
 	public Long saveTemporaryProject(String memberId, TemporaryProjectCreateRequest request) {
-		Optional<Project> existingProject = projectRepository.findByMemberId(memberId);
+		Optional<Project> existingProject = projectQueryDslRepository.findLatestTemporaryProjectByMemberId(memberId); // ✅ 가장 최근의 임시 프로젝트 가져오기
 		validateProjectFinalUpload(existingProject);
 
 		Project project = existingProject
@@ -60,7 +64,7 @@ public class ProjectService {
 
 	@Transactional
 	public Long createFinalProject(String memberId, ProjectCreateRequest request) {
-		Optional<Project> existingProject = projectRepository.findByMemberId(memberId);
+		Optional<Project> existingProject = projectQueryDslRepository.findLatestTemporaryProjectByMemberId(memberId); // ✅ 가장 최근의 임시 프로젝트 가져오기
 		validateProjectFinalUpload(existingProject);
 
 		Project project = existingProject
@@ -95,6 +99,20 @@ public class ProjectService {
 		return projects.map(ProjectListResponseDto::from);
 	}
 
+	@Transactional(readOnly = true)
+	public ProjectResponseDto getProjectDetail(Long projectId) {
+		Project project = projectRepository.findById(projectId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+		PlatformCategoryResponse platformCategory = projectCategoryService.getPlatformCategoryByProjectId(projectId);
+		List<ProjectDetailResponse> projectDetails = projectDetailService.getProjectDetailsByProjectId(projectId);
+		List<QuizResponse> quizzes = quizService.getQuizzesWithOptionsByProjectId(projectId);
+
+		// List<FeedbackFormResponse> feedbackForms = feedbackFormService.getFeedbackFormsByProjectId(projectId);
+
+		return ProjectResponseDto.from(project, platformCategory, projectDetails, quizzes);
+	}
+
 	private void validateProjectFinalUpload(Optional<Project> existingProject) {
 		if (existingProject.isPresent() && existingProject.get().getProjectStatus() == ProjectStatus.OPEN) {
 			throw new CustomException(ErrorCode.PROJECT_FINAL_CREATE_ALREADY_UPLOAD);
@@ -118,4 +136,18 @@ public class ProjectService {
 		quizOptionService.save(quizzes, request.quizRequests());
 		feedbackFormService.save(project, request.feedbackFormRequests());
 	}
+
+	@Transactional
+	public void deleteProject(String memberId, Long projectId) {
+		Project project = projectRepository.findById(projectId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+		if (!project.getMemberId().equals(memberId)) {
+			throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+		}
+
+		clearProjectData(project);
+		projectRepository.delete(project);
+	}
+
 }

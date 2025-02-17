@@ -1,6 +1,8 @@
 package com.dnd.demo.domain.project.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,4 +37,11 @@ public class CategoryService {
 			throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
 		}
 	}
+
+	@Transactional(readOnly = true)
+	public List<Category> getCategoriesByIds(List<Long> categoryIds) {
+		return Optional.ofNullable(categoryRepository.findByCategoryIdIn(categoryIds))
+			.orElse(Collections.emptyList());
+	}
+
 }

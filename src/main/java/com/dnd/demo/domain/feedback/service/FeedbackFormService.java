@@ -11,6 +11,7 @@ import com.dnd.demo.domain.feedback.dto.request.FeedbackFormRequest;
 import com.dnd.demo.domain.feedback.entity.FeedbackForm;
 import com.dnd.demo.domain.feedback.entity.FeedbackQuestion;
 import com.dnd.demo.domain.feedback.repository.FeedbackFormRepository;
+import com.dnd.demo.domain.feedback.dto.response.FeedbackFormResponse;
 import com.dnd.demo.domain.project.entity.Project;
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +38,15 @@ public class FeedbackFormService {
 		feedbackFormRepository.save(feedbackForm);
 	}
 
-
 	public void deleteByProjectId(Project project) {
 		feedbackFormRepository.deleteByProjectId(project.getProjectId());
+	}
+
+	@Transactional(readOnly = true)
+	public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
+		return feedbackFormRepository.findByProjectId(projectId)
+			.stream()
+			.flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+			.toList();
 	}
 }

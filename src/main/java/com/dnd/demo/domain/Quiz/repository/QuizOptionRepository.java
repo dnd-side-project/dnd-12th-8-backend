@@ -10,4 +10,6 @@ import com.dnd.demo.domain.Quiz.entity.QuizOption;
 @Repository
 public interface QuizOptionRepository extends JpaRepository<QuizOption, Long> {
 	void deleteByQuizIdIn(List<Long> quizIds);
+
+	List<QuizOption> findByQuizId(Long quizId);
 }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.demo.domain.project.dto.request.PlatformCategoryRequest;
+import com.dnd.demo.domain.project.dto.response.PlatformCategoryResponse;
+import com.dnd.demo.domain.project.entity.Category;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.entity.ProjectCategory;
 import com.dnd.demo.domain.project.repository.ProjectCategoryRepository;
@@ -35,5 +37,17 @@ public class ProjectCategoryService {
 
 	public void deleteByProjectId(Project project) {
 		projectCategoryRepository.deleteByProjectId(project.getProjectId());
+	}
+
+	@Transactional(readOnly = true)
+	public PlatformCategoryResponse getPlatformCategoryByProjectId(Long projectId) {
+		List<Long> categoryIds = projectCategoryRepository.findByProjectId(projectId)
+			.stream()
+			.map(ProjectCategory::getCategoryId)
+			.toList();
+
+		List<Category> categories = categoryService.getCategoriesByIds(categoryIds);
+
+		return PlatformCategoryResponse.from(categories);
 	}
 }

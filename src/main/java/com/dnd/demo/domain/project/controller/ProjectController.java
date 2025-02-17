@@ -1,17 +1,27 @@
 package com.dnd.demo.domain.project.controller;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.demo.common.dto.ApiResponse;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
+import com.dnd.demo.domain.project.entity.Project;
+import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.service.ProjectService;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 
@@ -46,4 +56,31 @@ public class ProjectController {
 		Long projectId = projectService.createFinalProject(oAuthUserDetails.getMemberId(), request);
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 생성 성공", projectId));
 	}
+
+	@Operation(summary = "프로젝트 전체 조회(인기 Post)", description = "찜 많은 순")
+	@GetMapping("/popular")
+	public ResponseEntity<Page<ProjectListResponseDto>> getPopularProjects(@PageableDefault(size = 10) Pageable pageable) {
+		return ResponseEntity.ok(projectService.getPopularProjects(pageable));
+	}
+
+	@Operation(summary = "프로젝트 전체 조회(추천 Post)", description = "유저 온보딩 때 입력한 값에 따라 필터링")
+	@GetMapping("/recommend")
+	public ResponseEntity<Page<ProjectListResponseDto>> getRecommendedProjects(
+		@AuthenticationPrincipal OAuthUserDetails oAuthUserDetails,
+		@PageableDefault(size = 10) Pageable pageable
+	) {
+		return ResponseEntity.ok(projectService.getRecommendedProjects(oAuthUserDetails.getMemberId(), pageable));
+	}
+
+	@Operation(summary = "프로젝트 전체 조회(검색 Post)", description = "직무, 카테고리(다중) 선택 가능 " )
+	@GetMapping("/search")
+	public ResponseEntity<Page<ProjectListResponseDto>> searchProjects(
+		@RequestParam(required = false) String query,
+		@RequestParam(required = false) Job job,
+		@RequestParam(required = false) List<Long> categories,
+		@PageableDefault(size = 10) Pageable pageable
+	) {
+		return ResponseEntity.ok(projectService.searchProjects(query, job, categories, pageable));
+	}
+
 }

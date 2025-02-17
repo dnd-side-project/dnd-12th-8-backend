@@ -1,7 +1,9 @@
 package com.dnd.demo.domain.member.dto;
 
-import com.dnd.demo.domain.project.entity.Job;
-import com.dnd.demo.domain.project.entity.Level;
+
+import com.dnd.demo.domain.project.enums.Job;
+import com.dnd.demo.domain.project.enums.Level;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

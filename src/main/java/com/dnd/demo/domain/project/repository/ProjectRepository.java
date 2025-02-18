@@ -1,5 +1,6 @@
 package com.dnd.demo.domain.project.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 	Optional<Project> findByMemberIdAndProjectStatus(String memberId, ProjectStatus projectStatus);
 
 	Optional<Project> findByMemberId(String memberId);
+
+	List<Project> findByProjectIdIn(List<Long> projectIds);
+
 }

@@ -21,6 +21,7 @@ public enum ErrorCode {
     PROJECT_FINAL_CREATE_ALREADY_UPLOAD(BAD_REQUEST, "이미 최종 업로드한 프로젝트입니다."),
     PROJECT_NOT_FOUND(NOT_FOUND,"프로젝트가 존재하지 않습니다."),
 
+    INVALID_IMAGE_TYPE(BAD_REQUEST, " 올바르지 않은 이미지 확장자 파일입니다."),
     ;
 
     private final HttpStatus httpStatus;

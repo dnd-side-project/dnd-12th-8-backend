@@ -4,5 +4,6 @@ public enum DetailType {
 	LINK,
 	YOUTUBE,
 	FIGMA,
+	TEXT,
 	IMAGE
 }

@@ -33,6 +33,7 @@ public enum ErrorCode {
 
     INVALID_QUIZ_PROJECT(UNAUTHORIZED,"해당 퀴즈는 해당 프로젝트에 대한 사전 퀴즈가 아닙니다."),
 
+    KAKAO_SERVER_ERROR(BAD_REQUEST,"카카오 서버 에러입니다"),
     ;
 
     private final HttpStatus httpStatus;

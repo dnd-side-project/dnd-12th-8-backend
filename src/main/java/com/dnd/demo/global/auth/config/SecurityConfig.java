@@ -2,8 +2,6 @@ package com.dnd.demo.global.auth.config;
 
 import com.dnd.demo.global.auth.filter.JwtAuthenticationFilter;
 import com.dnd.demo.global.auth.handler.OAuthAccessDeniedHandler;
-import com.dnd.demo.global.auth.handler.OAuthSuccessHandler;
-import com.dnd.demo.global.auth.service.CustomUserDetailService;
 import com.dnd.demo.global.auth.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailService customUserDetailService;
-    private final OAuthSuccessHandler oAuthSuccessHandler;
     private final OAuthAccessDeniedHandler oAuthAccessDeniedHandler;
 
     @Bean
@@ -36,7 +32,6 @@ public class SecurityConfig {
                         "/",
                         "/login",
                         "/members/onboarding",
-                        "/oauth2/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
                         "/swagger-resources/**",
@@ -45,12 +40,6 @@ public class SecurityConfig {
                     .requestMatchers("/test").hasAnyRole("admin", "user")
                     .anyRequest().permitAll();
             })
-            .oauth2Login(oauth2 ->
-                oauth2
-                    .userInfoEndpoint(endpoint ->
-                        endpoint.userService(customUserDetailService))
-                    .successHandler(oAuthSuccessHandler)
-            )
             .exceptionHandling(exception -> exception.accessDeniedHandler(oAuthAccessDeniedHandler))
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class);
@@ -58,4 +47,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-

@@ -3,6 +3,7 @@ package com.dnd.demo.domain.project.repository;
 import com.dnd.demo.domain.member.entity.Member;
 import com.dnd.demo.domain.member.entity.QFavorite;
 import com.dnd.demo.domain.member.entity.QMember;
+import com.dnd.demo.domain.member.entity.QMemberCategory;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.entity.QProject;
 import com.dnd.demo.domain.project.entity.QProjectCategory;
@@ -69,15 +70,25 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
 
         if (member == null) return Page.empty();
 
+        List<Long> categoryIds = getCategoryIds(memberId);
+
+        if (categoryIds.isEmpty()) return Page.empty();
+
+        List<Long> projectIds = queryFactory
+            .select(QProjectCategory.projectCategory.projectId)
+            .from(QProjectCategory.projectCategory)
+            .where(QProjectCategory.projectCategory.categoryId.in(categoryIds))
+            .fetch();
+
+        if (projectIds.isEmpty()) return Page.empty();
+
         List<Project> projects = queryFactory
             .selectFrom(QProject.project)
-            .leftJoin(QProjectCategory.projectCategory)
-            .on(QProject.project.projectId.eq(QProjectCategory.projectCategory.projectId))
             .where(
                 QProject.project.projectStatus.eq(ProjectStatus.OPEN),
                 QProject.project.targetJob.eq(member.getJob()),
                 QProject.project.targetLevel.eq(member.getLevel()),
-                QProjectCategory.projectCategory.categoryId.in(getCategoryIds(memberId))
+                QProject.project.projectId.in(projectIds)
             )
             .orderBy(
                 QProject.project.dueDate.asc(),
@@ -126,16 +137,11 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
         return new PageImpl<>(projects, pageable, projects.size());
     }
 
-
     private List<Long> getCategoryIds(String memberId) {
         return queryFactory
-            .select(QProjectCategory.projectCategory.categoryId)
-            .from(QProjectCategory.projectCategory)
-            .where(QProjectCategory.projectCategory.projectId.in(
-                JPAExpressions.select(QProject.project.projectId)
-                    .from(QProject.project)
-                    .where(QProject.project.memberId.eq(memberId))
-            ))
+            .select(QMemberCategory.memberCategory.categoryId)
+            .from(QMemberCategory.memberCategory)
+            .where(QMemberCategory.memberCategory.memberId.eq(memberId))
             .fetch();
     }
 

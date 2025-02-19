@@ -1,8 +1,16 @@
 package com.dnd.demo.domain.member.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dnd.demo.domain.member.dto.request.OnboardingRequest;
+import com.dnd.demo.domain.member.dto.response.MemberResponse;
+import com.dnd.demo.domain.member.entity.MemberCategory;
+import com.dnd.demo.domain.member.repository.MemberCategoryRepository;
+import com.dnd.demo.domain.project.repository.CategoryQueryDslRepository;
 import com.dnd.demo.global.exception.CustomException;
 import com.dnd.demo.global.exception.ErrorCode;
 import com.dnd.demo.domain.member.entity.Member;
@@ -15,10 +23,13 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final MemberCategoryRepository memberCategoryRepository;
+	private final CategoryQueryDslRepository categoryQueryDslRepository;
 
 	private static final int PROJECT_CREATION_COST = 100;
 	private static final int PROJECT_CREATION_AD_COST = 400;
 	private static final int QUIZ_COMPLETION_REWARD = 100;
+	private static final int ONBOARDING_COMPLETION_REWARD = 100;
 
 	public Member getMember(String id) {
 		return memberRepository.findById(id)
@@ -56,5 +67,30 @@ public class MemberService {
 	@Transactional
 	public Member rewardForQuizCompletion(String memberId) {
 		return addPoints(memberId, QUIZ_COMPLETION_REWARD);
+	}
+
+	@Transactional
+	public void completeOnboarding(String memberId, OnboardingRequest request) {
+		Member member = getMember(memberId);
+		member.updateOnboarding(request.email(), request.nickname(), request.job(), request.level());
+		member.updateOnboardingCompleted();
+		member.addPoints(ONBOARDING_COMPLETION_REWARD);
+		memberRepository.save(member);
+
+		List<Long> selectedCategoryIds = request.categoryIds();
+		List<Long> allCategoryIds = categoryQueryDslRepository.findRelatedCategoryIds(selectedCategoryIds);
+
+		List<MemberCategory> newCategories = request.toEntity(memberId, allCategoryIds);
+		memberCategoryRepository.saveAll(newCategories);
+	}
+
+	public MemberResponse getMemberInfo(String memberId) {
+		Member member = getMember(memberId);
+
+		List<Long> categoryIds = memberCategoryRepository.findByMemberId(memberId).stream()
+			.map(MemberCategory::getCategoryId)
+			.collect(Collectors.toList());
+
+		return MemberResponse.from(member, categoryIds);
 	}
 }

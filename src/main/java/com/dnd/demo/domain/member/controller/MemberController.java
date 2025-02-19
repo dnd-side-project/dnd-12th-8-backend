@@ -45,10 +45,10 @@ public class MemberController {
 		@PathVariable String memberId,
 		@RequestBody OnboardingRequest request) {
 		memberService.completeOnboarding(memberId, request);
-		return ResponseEntity.ok("Onboarding completed");
+		return ResponseEntity.ok("온보딩 입력 정보 업데이트 완료");
 	}
 
-	@Operation(summary = "내 정보 조회 (전체 아님)")
+	@Operation(summary = "내 정보 조회 ")
 	@GetMapping("/me")
 	public ResponseEntity<MemberResponse> getMemberInfo(
 		@AuthenticationPrincipal OAuthUserDetails userDetails) {

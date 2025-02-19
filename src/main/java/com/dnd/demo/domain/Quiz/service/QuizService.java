@@ -15,6 +15,8 @@ import com.dnd.demo.domain.Quiz.dto.response.QuizResponse;
 import com.dnd.demo.domain.member.entity.Member;
 import com.dnd.demo.domain.member.service.MemberService;
 import com.dnd.demo.domain.project.entity.Project;
+import com.dnd.demo.domain.project.enums.ProjectStatus;
+import com.dnd.demo.domain.project.repository.ProjectRepository;
 import com.dnd.demo.global.exception.CustomException;
 import com.dnd.demo.global.exception.ErrorCode;
 
@@ -28,6 +30,7 @@ public class QuizService {
 	private final MemberService memberService;
 	private final QuizOptionService quizOptionService;
 	private final QuizCompletionService quizCompletionService;
+	private final ProjectRepository projectRepository;
 
 	@Transactional
 	public List<Quiz> save(Project project, List<QuizRequest> requests) {
@@ -57,6 +60,7 @@ public class QuizService {
 
 	@Transactional
 	public int completeProjectQuiz(String memberId, Long projectId) {
+		validateProject(projectId);
 		validateQuizCompletionNotDuplicated(memberId, projectId);
 
 		Quiz quiz = getQuizByProjectId(projectId);
@@ -85,4 +89,14 @@ public class QuizService {
 		return quizRepository.findByProjectId(projectId)
 			.orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
 	}
+
+	private void validateProject(Long projectId) {
+		Project project = projectRepository.findById(projectId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+		if (project.getProjectStatus() != ProjectStatus.OPEN) {
+			throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);
+		}
+	}
+
 }

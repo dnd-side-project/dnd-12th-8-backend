@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
 
-
 @Getter
 public enum ErrorCode {
 
@@ -20,6 +19,10 @@ public enum ErrorCode {
     //Project
     PROJECT_FINAL_CREATE_ALREADY_UPLOAD(BAD_REQUEST, "이미 최종 업로드한 프로젝트입니다."),
     PROJECT_NOT_FOUND(NOT_FOUND,"프로젝트가 존재하지 않습니다."),
+    TEMP_PROJECT_NOT_FOUND(NOT_FOUND,"해당 프로젝트는 임시 저장된 프로젝트가 아닙니다."),
+
+    //FeedbackForm
+    FEEDBACK_FORM(NOT_FOUND,"피드팩 폼이 존재하지 않습니다"),
 
     INVALID_IMAGE_TYPE(BAD_REQUEST, " 올바르지 않은 이미지 확장자 파일입니다."),
     ;

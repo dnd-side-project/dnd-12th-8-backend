@@ -13,6 +13,10 @@ import com.dnd.demo.domain.feedback.entity.FeedbackQuestion;
 import com.dnd.demo.domain.feedback.repository.FeedbackFormRepository;
 import com.dnd.demo.domain.feedback.dto.response.FeedbackFormResponse;
 import com.dnd.demo.domain.project.entity.Project;
+import com.dnd.demo.domain.project.enums.ProjectStatus;
+import com.dnd.demo.domain.project.repository.ProjectRepository;
+import com.dnd.demo.global.exception.CustomException;
+import com.dnd.demo.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class FeedbackFormService {
 
 	private final FeedbackFormRepository feedbackFormRepository;
+	private final ProjectRepository projectRepository;
 
 	@Transactional
 	public void save(Project project, List<FeedbackFormRequest> requests) {
@@ -44,9 +49,19 @@ public class FeedbackFormService {
 
 	@Transactional(readOnly = true)
 	public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
+		validateProject(projectId);
 		return feedbackFormRepository.findByProjectId(projectId)
 			.stream()
 			.flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
 			.toList();
+	}
+
+	private void validateProject(Long projectId) {
+		Project project = projectRepository.findById(projectId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+		if (project.getProjectStatus() != ProjectStatus.OPEN) {
+			throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);
+		}
 	}
 }

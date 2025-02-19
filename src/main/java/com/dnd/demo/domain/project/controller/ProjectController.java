@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.demo.common.dto.ApiResponse;
+import com.dnd.demo.domain.member.dto.response.PointResponseDto;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.response.AdvertisedProjectResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
-import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.service.ProjectService;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +57,12 @@ public class ProjectController {
 		@Valid @RequestBody ProjectCreateRequest request) {
 		Long projectId = projectService.createFinalProject(oAuthUserDetails.getMemberId(), request);
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 생성 성공", projectId));
+	}
+
+	@Operation(summary = "광고된 프로젝트 조회", description = "광고로 등록된 프로젝트만 조회 (광고 시작일, 마감일 포함)")
+	@GetMapping("/advertised")
+	public ResponseEntity<List<AdvertisedProjectResponseDto>> getAdvertisedProjects() {
+		return ResponseEntity.ok(projectService.getAdvertisedProjects());
 	}
 
 	@Operation(summary = "프로젝트 전체 조회(인기 Post)", description = "찜 많은 순")

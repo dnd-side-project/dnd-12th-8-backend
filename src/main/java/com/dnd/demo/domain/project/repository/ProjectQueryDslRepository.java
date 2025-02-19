@@ -18,6 +18,6 @@ public interface ProjectQueryDslRepository {
 
 	Page<Project> searchProjects(String query, Job job, List<Long> categoryIds, Pageable pageable);
 
-	Optional<Project> findLatestTemporaryProjectByMemberId(String memberId);
+	Optional<Project> findLatestTemporaryProject(String memberId);
 
 }

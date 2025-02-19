@@ -140,7 +140,7 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
     }
 
     @Override
-    public Optional<Project> findLatestTemporaryProjectByMemberId(String memberId) {
+    public Optional<Project> findLatestTemporaryProject(String memberId) {
         Project result = queryFactory
             .selectFrom(project)
             .where(

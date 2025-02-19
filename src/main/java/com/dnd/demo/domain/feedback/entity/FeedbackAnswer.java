@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class FeedbackAnswer {
-	private String questionId;
-	private String selectedOption; // 객관식 선택 값 (or 리커트 척도)
-	private String responseText; // 주관식 or A/B 테스트 응답
+
+    private String questionId;
+    private String responseText; // 객관식 주관식 or A/B 테스트 응답
 }
 

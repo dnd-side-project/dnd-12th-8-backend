@@ -36,7 +36,6 @@ public class MyPageServiceImpl implements MyPageService {
     private final ProjectCategoryService projectCategoryService;
     private final ProjectDetailService projectDetailService;
     private final QuizService quizService;
-    private final QuizOptionService quizOptionService;
     private final FeedbackFormService feedbackFormService;
 
     @Override

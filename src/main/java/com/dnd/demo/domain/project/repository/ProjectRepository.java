@@ -1,5 +1,6 @@
 package com.dnd.demo.domain.project.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,9 +11,11 @@ import com.dnd.demo.domain.project.enums.ProjectStatus;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-	Optional<Project> findByMemberIdAndProjectStatus(String memberId, ProjectStatus projectStatus);
+	List<Project> findByMemberIdAndProjectStatus(String memberId, ProjectStatus projectStatus);
 
-	Optional<Project> findByMemberId(String memberId);
+	List<Project> findByMemberId(String memberId);
 
-	Optional<Project> findByProjectIdAndMemberIdAndProjectStatus(Long projectId, String memberId, ProjectStatus status);
+	List<Project> findByProjectIdIn(List<Long> projectIds);
+
+	Optional<Project> findByProjectIdAndMemberIdAndProjectStatus(Long projectId, String memberId, ProjectStatus projectStatus);
 }

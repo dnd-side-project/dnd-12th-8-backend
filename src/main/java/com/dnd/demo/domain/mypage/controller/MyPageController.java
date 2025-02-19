@@ -65,12 +65,9 @@ public class MyPageController {
 	public ResponseEntity<ApiResponse<MyPageProjectDetailResponseDto>> getTempProjectDetail(
 		@AuthenticationPrincipal OAuthUserDetails oAuthUserDetails,
 		@PathVariable Long projectId) {
-
 		MyPageProjectDetailResponseDto projectDetail = myPageService.getMyPageTempProjectDetail(
 			oAuthUserDetails.getMemberId(), projectId);
-
 		return ResponseEntity.ok(
 			new ApiResponse<>(HttpStatus.OK.value(), "임시 저장 프로젝트 상세 조회 성공", projectDetail));
 	}
-
 }

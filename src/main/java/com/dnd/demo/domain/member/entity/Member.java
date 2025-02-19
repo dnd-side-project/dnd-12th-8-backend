@@ -18,7 +18,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,18 +30,17 @@ public class Member extends BaseEntity {
     private Job job;
     @Enumerated(EnumType.STRING)
     private Level level;
-    // @Enumerated(EnumType.STRING)
-    // private MemberCategory category;
     private String email;
-    private Integer points = 100;
+    private Integer points ;
     private String memberName;
     private String profileUrl;
+    private boolean onboardingCompleted = false;
 
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
     public void addPoints(int amount) {
-        this.points += amount;
+        this.points = (this.points == null ? 0 : this.points) + amount;
     }
 
     public void reducePoints(int amount) {
@@ -50,5 +48,16 @@ public class Member extends BaseEntity {
             throw new CustomException(ErrorCode.INSUFFICIENT_POINTS);
         }
         this.points -= amount;
+    }
+
+    public void updateOnboarding(String email, String nickname, Job job, Level level) {
+        this.email = email;
+        this.memberName = nickname;
+        this.job = job;
+        this.level = level;
+    }
+
+    public void updateOnboardingCompleted() {
+        this.onboardingCompleted = true;
     }
 }

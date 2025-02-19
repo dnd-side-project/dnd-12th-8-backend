@@ -11,9 +11,9 @@ import com.dnd.demo.domain.project.enums.ProjectStatus;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-	Optional<Project> findByMemberIdAndProjectStatus(String memberId, ProjectStatus projectStatus);
+	List<Project> findByMemberIdAndProjectStatus(String memberId, ProjectStatus projectStatus);
 
-	Optional<Project> findByMemberId(String memberId);
+	List<Project> findByMemberId(String memberId);
 
 	List<Project> findByProjectIdIn(List<Long> projectIds);
 

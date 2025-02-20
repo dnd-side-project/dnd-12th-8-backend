@@ -18,4 +18,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 	List<Project> findByProjectIdIn(List<Long> projectIds);
 
 	Optional<Project> findByProjectIdAndMemberIdAndProjectStatus(Long projectId, String memberId, ProjectStatus projectStatus);
+
+	Project findByProjectId(Long projectId);
 }

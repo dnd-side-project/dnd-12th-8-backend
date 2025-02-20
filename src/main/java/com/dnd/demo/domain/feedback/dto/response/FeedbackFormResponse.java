@@ -7,6 +7,7 @@ import com.dnd.demo.domain.feedback.entity.FeedbackQuestion;
 import com.dnd.demo.domain.project.enums.QuestionType;
 
 public record FeedbackFormResponse(
+	String questionId,
 	String question,
 	QuestionType type,
 	List<String> options,
@@ -17,6 +18,7 @@ public record FeedbackFormResponse(
 ) {
 	public static FeedbackFormResponse from(FeedbackQuestion feedbackQuestion) {
 		return new FeedbackFormResponse(
+			feedbackQuestion.getQuestionId(),
 			feedbackQuestion.getQuestion(),
 			feedbackQuestion.getType(),
 			feedbackQuestion.getOptions() != null ? feedbackQuestion.getOptions() : List.of(),

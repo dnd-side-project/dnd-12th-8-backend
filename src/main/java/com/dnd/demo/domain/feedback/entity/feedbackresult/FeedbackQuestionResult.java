@@ -47,6 +47,10 @@ public class FeedbackQuestionResult {
             case LIKERT_SCALE:
                 questionResponseCount += 1;
                 int points = Integer.parseInt(answer.getSelectedOption()) + 1;
+                if(totalPoints == null){
+                    totalPoints =0;
+                }
+
                 responseResultList.get(points - 1).responseCount += 1;
                 totalPoints += points;
                 break;
@@ -71,6 +75,7 @@ public class FeedbackQuestionResult {
         feedbackQuestionResult.setQuestionId(question.getQuestionId());
         feedbackQuestionResult.setQuestionType(question.getType());
         feedbackQuestionResult.setQuestionResponseCount(0);
+        feedbackQuestionResult.setTotalPoints(0);
         List<FeedbackQuestionResultType> responseResultList = new ArrayList<>();
         switch (question.getType()) {
             case MULTIPLE_CHOICE:

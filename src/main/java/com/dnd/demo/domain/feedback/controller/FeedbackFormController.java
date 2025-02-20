@@ -34,7 +34,7 @@ public class FeedbackFormController {
     @GetMapping("/{projectId}")
     public ResponseEntity<List<FeedbackFormResponse>> getFeedbackForms(
       @PathVariable Long projectId) {
-        List<FeedbackFormResponse> feedbackForms = feedbackFormService.getFeedbackFormsByProjectId(
+        List<FeedbackFormResponse> feedbackForms = feedbackFormService.getFeedbackFormsByProjectIdForPublic(
           projectId);
         return ResponseEntity.ok(feedbackForms);
     }
@@ -51,7 +51,7 @@ public class FeedbackFormController {
               id));
     }
 
-    @Operation(summary = "프로젝트 피드백 결과 조회 ", description = "프로젝트 피드백 결과 조회 API")
+    @Operation(summary = "피드백 답변 결과 조회 ", description = "프로젝트 피드백 결과 조회 API입니다.")
     @GetMapping("/feedback-result/{projectId}")
     public ResponseEntity<ApiResponse<FeedbackResultResponse>> getFeedbackResult(
       @PathVariable("projectId") Long projectId) {

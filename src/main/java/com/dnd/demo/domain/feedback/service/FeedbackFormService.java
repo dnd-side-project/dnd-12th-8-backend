@@ -65,17 +65,25 @@ public class FeedbackFormService {
     }
 
     @Transactional(readOnly = true)
-    public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
-        validateProject(projectId);
+    public List<FeedbackFormResponse> getFeedbackFormsByProjectIdForPublic(Long projectId) {
+        validateProjectForPublicAccess(projectId);
         return feedbackFormRepository.findByProjectId(projectId)
-          .stream()
-          .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
-          .toList();
+            .stream()
+            .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+            .toList();
     }
 
-    private void validateProject(Long projectId) {
+    @Transactional(readOnly = true)
+    public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
+        return feedbackFormRepository.findByProjectId(projectId)
+            .stream()
+            .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+            .toList();
+    }
+
+    private void validateProjectForPublicAccess(Long projectId) {
         Project project = projectRepository.findById(projectId)
-          .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         if (project.getProjectStatus() != ProjectStatus.OPEN) {
             throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);

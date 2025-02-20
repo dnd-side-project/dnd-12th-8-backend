@@ -12,5 +12,5 @@ import com.dnd.demo.domain.Quiz.entity.Quiz;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 	List<Quiz> deleteByProjectId(Long id);
 
-	Optional<Quiz> findByProjectId(Long projectId);
+	List<Quiz> findByProjectId(Long projectId);
 }

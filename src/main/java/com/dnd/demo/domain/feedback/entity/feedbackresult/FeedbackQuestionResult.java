@@ -75,6 +75,7 @@ public class FeedbackQuestionResult {
         switch (question.getType()) {
             case MULTIPLE_CHOICE:
             case LIKERT_SCALE:
+                feedbackQuestionResult.setTotalPoints(0);
                 for (String option : question.getOptions()) {
                     FeedbackQuestionResultType feedbackQuestionResultType = new FeedbackQuestionResultType();
                     feedbackQuestionResultType.setQuestionText(option);

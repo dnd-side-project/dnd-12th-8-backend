@@ -39,7 +39,7 @@ public class FeedbackFormController {
         return ResponseEntity.ok(feedbackForms);
     }
 
-    @Operation(summary = "피드백 답변 제출 ", description = "프로젝트 피드백 답변 제출 API입니다.")
+    @Operation(summary = "피드백 답변 제출", description = "프로젝트 피드백 답변 제출 API")
     @PostMapping("/feedback")
     public ResponseEntity<ApiResponse<String>> saveFeedbackForm(
       @AuthenticationPrincipal OAuthUserDetails oAuthUserDetails,
@@ -51,7 +51,7 @@ public class FeedbackFormController {
               id));
     }
 
-    @Operation(summary = "피드백 답변 제출 ", description = "프로젝트 피드백 결과 조회 API입니다.")
+    @Operation(summary = "프로젝트 피드백 결과 조회 ", description = "프로젝트 피드백 결과 조회 API")
     @GetMapping("/feedback-result/{projectId}")
     public ResponseEntity<ApiResponse<FeedbackResultResponse>> getFeedbackResult(
       @PathVariable("projectId") Long projectId) {

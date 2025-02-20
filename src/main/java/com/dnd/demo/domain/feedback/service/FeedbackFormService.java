@@ -47,7 +47,10 @@ public class FeedbackFormService {
 
         FeedbackResult feedbackResult = new FeedbackResult();
         feedbackResult.setProjectId(project.getProjectId());
-        feedbackResult.setTotalResponseCount(0);
+
+        Optional<FeedbackResult> existFeedbackResult = feedbackResultRepository.findByProjectId(
+          project.getProjectId());
+        existFeedbackResult.ifPresent(result -> feedbackResult.setId(result.getId()));
 
         List<FeedbackQuestionResult> feedbackQuestionResultList = new ArrayList<>();
         for (FeedbackQuestion question : feedbackForm.getQuestions()) {

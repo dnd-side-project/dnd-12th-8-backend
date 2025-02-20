@@ -60,4 +60,8 @@ public class Member extends BaseEntity {
     public void updateOnboardingCompleted() {
         this.onboardingCompleted = true;
     }
+
+    public void updateOnboardingStatus(boolean onboardingCompleted) {
+        this.onboardingCompleted = onboardingCompleted;
+    }
 }

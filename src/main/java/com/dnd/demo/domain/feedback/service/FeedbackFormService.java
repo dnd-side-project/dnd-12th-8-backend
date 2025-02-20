@@ -1,67 +1,81 @@
 package com.dnd.demo.domain.feedback.service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dnd.demo.domain.feedback.dto.request.FeedbackFormRequest;
+import com.dnd.demo.domain.feedback.dto.response.FeedbackFormResponse;
 import com.dnd.demo.domain.feedback.entity.FeedbackForm;
 import com.dnd.demo.domain.feedback.entity.FeedbackQuestion;
+import com.dnd.demo.domain.feedback.entity.FeedbackResult;
+import com.dnd.demo.domain.feedback.entity.feedbackresult.FeedbackQuestionResult;
 import com.dnd.demo.domain.feedback.repository.FeedbackFormRepository;
-import com.dnd.demo.domain.feedback.dto.response.FeedbackFormResponse;
+import com.dnd.demo.domain.feedback.repository.FeedbackResultRepository;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
 import com.dnd.demo.domain.project.repository.ProjectRepository;
 import com.dnd.demo.global.exception.CustomException;
 import com.dnd.demo.global.exception.ErrorCode;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FeedbackFormService {
 
-	private final FeedbackFormRepository feedbackFormRepository;
-	private final ProjectRepository projectRepository;
+    private final FeedbackFormRepository feedbackFormRepository;
+    private final ProjectRepository projectRepository;
 
-	@Transactional
-	public void save(Project project, List<FeedbackFormRequest> requests) {
-		List<FeedbackQuestion> feedbackQuestions = Optional.ofNullable(requests)
-			.orElseGet(Collections::emptyList)
-			.stream()
-			.map(FeedbackFormRequest::toEntity)
-			.toList();
+    private final FeedbackResultRepository feedbackResultRepository;
 
-		FeedbackForm feedbackForm = FeedbackForm.builder()
-			.projectId(project.getProjectId())
-			.questions(feedbackQuestions)
-			.build();
+    @Transactional
+    public void save(Project project, List<FeedbackFormRequest> requests) {
+        List<FeedbackQuestion> feedbackQuestions = Optional.ofNullable(requests)
+          .orElseGet(Collections::emptyList)
+          .stream()
+          .map(FeedbackFormRequest::toEntity)
+          .toList();
 
-		feedbackFormRepository.save(feedbackForm);
-	}
+        FeedbackForm feedbackForm = FeedbackForm.builder()
+          .projectId(project.getProjectId())
+          .questions(feedbackQuestions)
+          .build();
 
-	public void deleteByProjectId(Project project) {
-		feedbackFormRepository.deleteByProjectId(project.getProjectId());
-	}
+        feedbackFormRepository.save(feedbackForm);
 
-	@Transactional(readOnly = true)
-	public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
-		validateProject(projectId);
-		return feedbackFormRepository.findByProjectId(projectId)
-			.stream()
-			.flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
-			.toList();
-	}
+        FeedbackResult feedbackResult = new FeedbackResult();
+        feedbackResult.setProjectId(project.getProjectId());
+        feedbackResult.setTotalResponseCount(0);
 
-	private void validateProject(Long projectId) {
-		Project project = projectRepository.findById(projectId)
-			.orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+        List<FeedbackQuestionResult> feedbackQuestionResultList = new ArrayList<>();
+        for (FeedbackQuestion question : feedbackForm.getQuestions()) {
+            feedbackQuestionResultList.add(FeedbackQuestionResult.createQuestionResult(question));
+        }
+        feedbackResult.setFeedbackQuestionResult(feedbackQuestionResultList);
+        feedbackResultRepository.save(feedbackResult);
+    }
 
-		if (project.getProjectStatus() != ProjectStatus.OPEN) {
-			throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);
-		}
-	}
+    public void deleteByProjectId(Project project) {
+        feedbackFormRepository.deleteByProjectId(project.getProjectId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
+        validateProject(projectId);
+        return feedbackFormRepository.findByProjectId(projectId)
+          .stream()
+          .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+          .toList();
+    }
+
+    private void validateProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+          .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        if (project.getProjectStatus() != ProjectStatus.OPEN) {
+            throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);
+        }
+    }
 }

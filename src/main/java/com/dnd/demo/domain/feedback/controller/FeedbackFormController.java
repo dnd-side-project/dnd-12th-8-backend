@@ -3,6 +3,7 @@ package com.dnd.demo.domain.feedback.controller;
 import com.dnd.demo.common.dto.ApiResponse;
 import com.dnd.demo.domain.feedback.dto.request.FeedbackResponseRequest;
 import com.dnd.demo.domain.feedback.dto.response.FeedbackFormResponse;
+import com.dnd.demo.domain.feedback.dto.response.FeedbackResultResponse;
 import com.dnd.demo.domain.feedback.service.FeedbackFormService;
 import com.dnd.demo.domain.feedback.service.FeedbackResponseService;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
@@ -48,5 +49,14 @@ public class FeedbackFormController {
           .body(
             new ApiResponse<>(HttpStatus.CREATED.value(), id != null ? "피드백 제출 성공" : "피드백 제출 실패",
               id));
+    }
+
+    @Operation(summary = "피드백 답변 제출 ", description = "프로젝트 피드백 결과 조회 API입니다.")
+    @GetMapping("/feedback-result/{projectId}")
+    public ResponseEntity<ApiResponse<FeedbackResultResponse>> getFeedbackResult(
+      @PathVariable("projectId") Long projectId) {
+        return ResponseEntity.status(HttpStatus.OK)
+          .body(new ApiResponse<>(HttpStatus.OK.value(), "결과 조회 성공",
+            feedbackResponseService.getFeedbackResult(projectId)));
     }
 }

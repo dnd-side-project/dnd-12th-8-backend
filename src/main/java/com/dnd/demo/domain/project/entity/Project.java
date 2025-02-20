@@ -62,4 +62,8 @@ public class Project extends BaseEntity {
 	public void changeStatusToOpen() {
 		this.projectStatus = ProjectStatus.OPEN;
 	}
+
+	public void addFavoriteCount(){
+		this.favoriteCount +=1;
+	}
 }

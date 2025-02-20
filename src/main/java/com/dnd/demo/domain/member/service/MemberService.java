@@ -93,4 +93,11 @@ public class MemberService {
 
 		return MemberResponse.from(member, categoryIds);
 	}
+
+	@Transactional
+	public void updateOnboardingStatus(String memberId, boolean onboardingCompleted) {
+		Member member = getMember(memberId);
+		member.updateOnboardingStatus(onboardingCompleted);
+		memberRepository.save(member);
+	}
 }

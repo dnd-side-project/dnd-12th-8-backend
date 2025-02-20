@@ -50,12 +50,12 @@ public class QuizService {
 	@Transactional(readOnly = true)
 	public List<QuizResponse> getQuizzesWithOptionsByProjectId(Long projectId) {
 		return quizRepository.findByProjectId(projectId)
+			.stream()
 			.map(quiz -> {
 				List<QuizOption> quizOptions = quizOptionService.getQuizOptionsByQuizId(quiz.getQuizId());
 				return QuizResponse.from(quiz, quizOptions);
 			})
-			.map(List::of)
-			.orElse(Collections.emptyList());
+			.toList();
 	}
 
 	@Transactional
@@ -63,8 +63,8 @@ public class QuizService {
 		validateProject(projectId);
 		validateQuizCompletionNotDuplicated(memberId, projectId);
 
-		Quiz quiz = getQuizByProjectId(projectId);
-		validateQuizProjectAssociation(projectId, quiz);
+		// Quiz quiz = getQuizByProjectId(projectId);
+		// validateQuizProjectAssociation(projectId, quiz);
 
 		Member member = memberService.rewardForQuizCompletion(memberId);
 		quizCompletionService.save(memberId, projectId);
@@ -84,11 +84,11 @@ public class QuizService {
 		}
 	}
 
-	@Transactional(readOnly = true)
-	public Quiz getQuizByProjectId(Long projectId) {
-		return quizRepository.findByProjectId(projectId)
-			.orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
-	}
+	// @Transactional(readOnly = true)
+	// public Quiz getQuizByProjectId(Long projectId) {
+	// 	return quizRepository.findByProjectId(projectId)
+	// 		.orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
+	// }
 
 	private void validateProject(Long projectId) {
 		Project project = projectRepository.findById(projectId)

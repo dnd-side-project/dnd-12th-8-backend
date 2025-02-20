@@ -14,6 +14,7 @@ public class FeedbackAnswer {
 
     private String questionId;
     private QuestionType questionType;
-    private String responseText; // 객관식 주관식 or A/B 테스트 응답
+    private String selectedOption; // 객관식, 리커드 척도, A/B 테스트
+    private String responseText; // 주관식 or A/B 테스트 응답
 }
 

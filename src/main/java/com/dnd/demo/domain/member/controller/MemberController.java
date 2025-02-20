@@ -3,13 +3,16 @@ package com.dnd.demo.domain.member.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dnd.demo.domain.member.dto.request.OnboardingRequest;
+import com.dnd.demo.domain.member.dto.request.OnboardingStatusRequest;
 import com.dnd.demo.domain.member.dto.response.MemberResponse;
 import com.dnd.demo.domain.member.dto.response.PointResponseDto;
 import com.dnd.demo.domain.member.entity.Member;
@@ -55,4 +58,14 @@ public class MemberController {
 		MemberResponse response = memberService.getMemberInfo(userDetails.getMemberId());
 		return ResponseEntity.ok(response);
 	}
+
+	@Operation(summary = "온보딩 상태 변경", description = "사용자의 온보딩 완료 여부를 변경합니다.")
+	@PatchMapping("/onboarding-status")
+	public ResponseEntity<String> updateOnboardingStatus(
+		@AuthenticationPrincipal OAuthUserDetails userDetails,
+		@RequestParam boolean onboardingCompleted) {
+		memberService.updateOnboardingStatus(userDetails.getMemberId(), onboardingCompleted);
+		return ResponseEntity.ok("온보딩 상태 변경 완료");
+	}
+
 }

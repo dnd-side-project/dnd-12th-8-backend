@@ -1,5 +1,6 @@
 package com.dnd.demo.domain.member.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,16 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dnd.demo.common.dto.ApiResponse;
 import com.dnd.demo.domain.member.dto.request.OnboardingRequest;
-import com.dnd.demo.domain.member.dto.request.OnboardingStatusRequest;
 import com.dnd.demo.domain.member.dto.response.MemberResponse;
+import com.dnd.demo.domain.member.dto.response.MemberSearchResponseDto;
 import com.dnd.demo.domain.member.dto.response.PointResponseDto;
-import com.dnd.demo.domain.member.entity.Member;
-import com.dnd.demo.domain.member.repository.MemberRepository;
 import com.dnd.demo.domain.member.service.MemberService;
 import com.dnd.demo.global.auth.dto.OAuthUserDetails;
-import com.dnd.demo.global.exception.CustomException;
-import com.dnd.demo.global.exception.ErrorCode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,6 +64,16 @@ public class MemberController {
 		@RequestParam boolean onboardingCompleted) {
 		memberService.updateOnboardingStatus(userDetails.getMemberId(), onboardingCompleted);
 		return ResponseEntity.ok("온보딩 상태 변경 완료");
+	}
+
+	@Operation(summary = "회원 검색", description = "프로젝트 생성 시 프로젝트 참여자 검색 API.")
+	@GetMapping("/search")
+	public ResponseEntity<ApiResponse<MemberSearchResponseDto>> getMember(
+		@RequestParam String email) {
+		return ResponseEntity.ok(
+			new ApiResponse<>(HttpStatus.OK.value(), "조회 성공",
+				memberService.getMemberByEmail(email))
+		);
 	}
 
 }

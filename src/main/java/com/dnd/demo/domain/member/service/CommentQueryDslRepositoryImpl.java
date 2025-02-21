@@ -23,7 +23,7 @@ public class CommentQueryDslRepositoryImpl implements CommentQueryDslRepository 
     @Override
     public List<CommentDto> findCommentListByProjectId(Long projectId) {
         return queryFactory.select(
-            Projections.constructor(CommentDto.class, member.memberId,
+            Projections.constructor(CommentDto.class,
               member.memberName,
               member.job, member.level, comment.content)
           )

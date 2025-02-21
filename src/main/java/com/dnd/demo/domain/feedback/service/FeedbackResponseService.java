@@ -12,7 +12,6 @@ import com.dnd.demo.domain.feedback.repository.FeedbackResponseRepository;
 import com.dnd.demo.domain.feedback.repository.FeedbackResultRepository;
 import com.dnd.demo.global.exception.CustomException;
 import com.dnd.demo.global.exception.ErrorCode;
-
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,28 +29,30 @@ public class FeedbackResponseService {
     @Transactional
     public String save(String memberId, FeedbackResponseRequest request) {
         FeedbackForm feedbackForm = feedbackFormRepository.findByProjectId(request.projectId())
-            .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_FORM_NOT_FOUND));
+          .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_FORM_NOT_FOUND));
 
-        FeedbackResponse feedbackResponse = request.toEntity(memberId, feedbackForm.getFeedbackFormId());
+        FeedbackResponse feedbackResponse = request.toEntity(memberId,
+          feedbackForm.getId());
         feedbackResponseRepository.save(feedbackResponse);
 
         List<FeedbackAnswer> answers = feedbackResponse.getAnswers();
 
-        FeedbackResult feedbackResult = feedbackResultRepository.findByProjectId(request.projectId())
-            .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_RESULT_NOT_FOUND));
+        FeedbackResult feedbackResult = feedbackResultRepository.findByProjectId(
+            request.projectId())
+          .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_RESULT_NOT_FOUND));
 
         feedbackResult.setTotalResponseCount(feedbackResult.getTotalResponseCount() + 1);
 
         for (FeedbackAnswer answer : answers) {
             Optional<FeedbackQuestionResult> feedbackQuestionResult = feedbackResult.getFeedbackQuestionResult()
-                .stream()
-                .filter(questionAnswer -> answer.getQuestionId().equals(questionAnswer.getQuestionId()))
-                .findFirst();
+              .stream()
+              .filter(
+                questionAnswer -> answer.getQuestionId().equals(questionAnswer.getQuestionId()))
+              .findFirst();
 
             if (feedbackQuestionResult.isEmpty()) {
                 throw new CustomException(ErrorCode.INVALID_FEEDBACK_QUESTION_ID);
             }
-
 
             FeedbackQuestionResult questionAnswer = feedbackQuestionResult.get();
             questionAnswer.addQuestionResult(answer);

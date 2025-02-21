@@ -9,7 +9,7 @@ public record ProjectDetailRequest(
 
 	DetailType type,
 
-	@Size(max = 500, message = "상세 정보 내용은 최대 500자까지 입력 가능합니다.")
+	@Size(max = 3000, message = "상세 정보 내용은 최대 3000자까지 입력 가능합니다.")
 	String detailContent
 
 ) {

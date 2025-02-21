@@ -60,4 +60,9 @@ public class ProjectCategoryService {
 		List<Category> categories = categoryRepository.findByCategoryIdIn(categoryIds);
 		return PlatformCategoryResponse.from(categories);
 	}
+
+	@Transactional(readOnly = true)
+	public List<Long> getCategoryIdsByProjectId(Long projectId) {
+		return projectCategoryRepository.findCategoryIdsByProjectId(projectId);
+	}
 }

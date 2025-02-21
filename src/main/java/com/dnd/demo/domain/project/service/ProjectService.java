@@ -7,12 +7,16 @@ import com.dnd.demo.domain.Quiz.service.QuizService;
 import com.dnd.demo.domain.advertisement.entity.Advertisement;
 import com.dnd.demo.domain.advertisement.service.AdvertisementService;
 import com.dnd.demo.domain.feedback.service.FeedbackFormService;
+import com.dnd.demo.domain.member.dto.response.CommentResponseDto;
+import com.dnd.demo.domain.member.dto.response.MemberSubInfoResponse;
+import com.dnd.demo.domain.member.service.CommentService;
 import com.dnd.demo.domain.member.service.MemberService;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.ProjectSaveRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.response.AdvertisedProjectResponseDto;
 import com.dnd.demo.domain.project.dto.response.PlatformCategoryResponse;
+import com.dnd.demo.domain.project.dto.response.ProjectCategoryRecommendationResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectDetailResponse;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
@@ -47,6 +51,7 @@ public class ProjectService {
     private final AdvertisementService advertisementService;
     private final ProjectQueryDslRepository projectQueryDslRepository;
     private final ProjectRepository projectRepository;
+    private final CommentService commentService;
 
     @Transactional
     public Long saveTemporaryProject(String memberId, TemporaryProjectCreateRequest request) {
@@ -124,13 +129,20 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public ProjectResponseDto getProjectDetail(Long projectId) {
         Project project = getProject(projectId);
+        List<String> participants = List.of(project.getProjectMemberEmails().split(", "));
+
         PlatformCategoryResponse platformCategory = projectCategoryService.getPlatformCategoryByProjectId(
           projectId);
         List<ProjectDetailResponse> projectDetails = projectDetailService.getProjectDetailsByProjectId(
           projectId);
         List<QuizResponse> quizzes = quizService.getQuizzesWithOptionsByProjectId(projectId);
+        CommentResponseDto commentResponseDto = commentService.getProjectComments(projectId);
         // List<FeedbackFormResponse> feedbackForms = feedbackFormService.getFeedbackFormsByProjectId(projectId);
-        return ProjectResponseDto.from(project, platformCategory, projectDetails, quizzes);
+        List<MemberSubInfoResponse> memberResponseList = memberService.getMemberInfoByEmails(
+          participants);
+        return ProjectResponseDto.from(project, platformCategory, memberResponseList,
+          projectDetails, quizzes,
+          commentResponseDto.comments());
     }
 
     @Transactional
@@ -177,4 +189,17 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_FINAL_CREATE_ALREADY_UPLOAD);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<ProjectCategoryRecommendationResponseDto> getRelatedProjects(Long projectId) {
+        List<Long> categoryIds = projectCategoryService.getCategoryIdsByProjectId(projectId);
+        List<Long> relatedProjectIds = projectQueryDslRepository.findProjectIdsByCategoryIds(categoryIds);
+
+        List<Project> relatedProjects = projectRepository.findByProjectIdIn(relatedProjectIds);
+
+        return relatedProjects.stream()
+            .map(ProjectCategoryRecommendationResponseDto::from)
+            .toList();
+    }
+
 }

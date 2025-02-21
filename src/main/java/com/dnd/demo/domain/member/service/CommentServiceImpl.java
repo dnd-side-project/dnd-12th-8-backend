@@ -2,7 +2,7 @@ package com.dnd.demo.domain.member.service;
 
 import com.dnd.demo.domain.member.dto.CommentDto;
 import com.dnd.demo.domain.member.dto.CommentRequestDto;
-import com.dnd.demo.domain.member.dto.CommentResponseDto;
+import com.dnd.demo.domain.member.dto.response.CommentResponseDto;
 import com.dnd.demo.domain.member.entity.Comment;
 import com.dnd.demo.domain.member.repository.CommentRepository;
 import jakarta.transaction.Transactional;

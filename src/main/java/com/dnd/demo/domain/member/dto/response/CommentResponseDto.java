@@ -1,16 +1,12 @@
-package com.dnd.demo.domain.member.dto;
+package com.dnd.demo.domain.member.dto.response;
 
+import com.dnd.demo.domain.member.dto.CommentDto;
 import java.util.List;
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
+
 @Builder
-public class CommentResponseDto {
-
-    private Long projectId;
-
-    private List<CommentDto> comments;
+public record CommentResponseDto(Long projectId, List<CommentDto> comments) {
 
     public static CommentResponseDto fromCommentDto(Long projectId, List<CommentDto> comments) {
         return CommentResponseDto.builder()

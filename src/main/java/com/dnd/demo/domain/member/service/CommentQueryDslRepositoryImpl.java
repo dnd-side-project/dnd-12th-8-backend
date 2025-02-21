@@ -25,7 +25,7 @@ public class CommentQueryDslRepositoryImpl implements CommentQueryDslRepository 
         return queryFactory.select(
             Projections.constructor(CommentDto.class,
               member.memberName,
-              member.job, member.level, comment.content)
+              member.job, member.level, comment.content, member.profileUrl)
           )
           .from(project)
           .join(comment)

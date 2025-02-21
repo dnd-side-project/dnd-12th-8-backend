@@ -47,6 +47,7 @@ public class FeedbackFormService {
 
         FeedbackResult feedbackResult = new FeedbackResult();
         feedbackResult.setProjectId(project.getProjectId());
+        feedbackResult.setTotalResponseCount(0);
 
         Optional<FeedbackResult> existFeedbackResult = feedbackResultRepository.findByProjectId(
           project.getProjectId());
@@ -68,22 +69,22 @@ public class FeedbackFormService {
     public List<FeedbackFormResponse> getFeedbackFormsByProjectIdForPublic(Long projectId) {
         validateProjectForPublicAccess(projectId);
         return feedbackFormRepository.findAllByProjectId(projectId)
-            .stream()
-            .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
-            .toList();
+          .stream()
+          .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+          .toList();
     }
 
     @Transactional(readOnly = true)
     public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
         return feedbackFormRepository.findAllByProjectId(projectId)
-            .stream()
-            .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
-            .toList();
+          .stream()
+          .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
+          .toList();
     }
 
     private void validateProjectForPublicAccess(Long projectId) {
         Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+          .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         if (project.getProjectStatus() != ProjectStatus.OPEN) {
             throw new CustomException(ErrorCode.PROJECT_NOT_OPEN);

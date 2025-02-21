@@ -95,7 +95,7 @@ public class ProjectController {
     @Operation(summary = "프로젝트 상세 조회", description = "현재는 최종 저장, 임시 저장 되어있는 글 모두 조회 됩니다.")
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDto> getProjectDetail(
-      @PathVariable(name = "projectID") Long projectId) {
+      @PathVariable(name = "projectId") Long projectId) {
         return ResponseEntity.ok(projectService.getProjectDetail(projectId));
     }
 

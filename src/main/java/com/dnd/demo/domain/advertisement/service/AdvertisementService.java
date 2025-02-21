@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.demo.domain.advertisement.entity.Advertisement;
 import com.dnd.demo.domain.advertisement.repository.AdvertisementRepository;
+import com.dnd.demo.domain.project.entity.Project;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,5 +43,9 @@ public class AdvertisementService {
 	@Transactional(readOnly = true)
 	public boolean existsAdvertisementId(Long projectId) {
 		return advertisementRepository.existsById(projectId);
+	}
+
+	public void deleteByProjectId(Project project) {
+		advertisementRepository.deleteById(project.getProjectId());
 	}
 }

@@ -67,7 +67,7 @@ public class FeedbackFormService {
     @Transactional(readOnly = true)
     public List<FeedbackFormResponse> getFeedbackFormsByProjectIdForPublic(Long projectId) {
         validateProjectForPublicAccess(projectId);
-        return feedbackFormRepository.findByProjectId(projectId)
+        return feedbackFormRepository.findAllByProjectId(projectId)
             .stream()
             .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
             .toList();
@@ -75,7 +75,7 @@ public class FeedbackFormService {
 
     @Transactional(readOnly = true)
     public List<FeedbackFormResponse> getFeedbackFormsByProjectId(Long projectId) {
-        return feedbackFormRepository.findByProjectId(projectId)
+        return feedbackFormRepository.findAllByProjectId(projectId)
             .stream()
             .flatMap(feedbackForm -> FeedbackFormResponse.from(feedbackForm).stream())
             .toList();

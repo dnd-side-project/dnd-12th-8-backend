@@ -22,6 +22,7 @@ import com.dnd.demo.domain.member.dto.response.PointResponseDto;
 import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.response.AdvertisedProjectResponseDto;
+import com.dnd.demo.domain.project.dto.response.ProjectCategoryRecommendationResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
 import com.dnd.demo.domain.project.enums.Job;
@@ -105,4 +106,12 @@ public class ProjectController {
 		projectService.deleteProject(oAuthUserDetails.getMemberId(), projectId);
 		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 삭제 성공", null));
 	}
+
+	@Operation(summary = "연관 카테고리 프로젝트 조회", description = "특정 프로젝트와 같은 카테고리를 가진 프로젝트 목록 조회")
+	@GetMapping("/{projectId}/related")
+	public ResponseEntity<List<ProjectCategoryRecommendationResponseDto>> getRelatedProjects(
+		@PathVariable Long projectId) {
+		return ResponseEntity.ok(projectService.getRelatedProjects(projectId));
+	}
+
 }

@@ -2,11 +2,10 @@ package com.dnd.demo.domain.project.dto.response;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.dnd.demo.domain.project.entity.Category;
 import com.dnd.demo.domain.project.enums.PlatformType;
-import com.dnd.demo.global.exception.CustomException;
-import com.dnd.demo.global.exception.ErrorCode;
 
 public record PlatformCategoryResponse(
 	PlatformType platform,
@@ -17,12 +16,15 @@ public record PlatformCategoryResponse(
 			return new PlatformCategoryResponse(null, Collections.emptyList());
 		}
 
-		PlatformType platformType = categories.get(0).getType();
+		PlatformType platformType = Optional.ofNullable(categories.get(0))
+			.map(Category::getType)
+			.orElse(null);
+
 		List<String> categoryNames = categories.stream()
 			.map(Category::getCategoryName)
 			.toList();
 
 		return new PlatformCategoryResponse(platformType, categoryNames);
 	}
-
 }
+

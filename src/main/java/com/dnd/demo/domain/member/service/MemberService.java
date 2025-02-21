@@ -1,6 +1,7 @@
 package com.dnd.demo.domain.member.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -8,13 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dnd.demo.domain.member.dto.request.OnboardingRequest;
 import com.dnd.demo.domain.member.dto.response.MemberResponse;
+import com.dnd.demo.domain.member.dto.response.MemberSearchResponseDto;
+import com.dnd.demo.domain.member.entity.Member;
 import com.dnd.demo.domain.member.entity.MemberCategory;
 import com.dnd.demo.domain.member.repository.MemberCategoryRepository;
+import com.dnd.demo.domain.member.repository.MemberRepository;
 import com.dnd.demo.domain.project.repository.CategoryQueryDslRepository;
 import com.dnd.demo.global.exception.CustomException;
 import com.dnd.demo.global.exception.ErrorCode;
-import com.dnd.demo.domain.member.entity.Member;
-import com.dnd.demo.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -99,5 +101,10 @@ public class MemberService {
 		Member member = getMember(memberId);
 		member.updateOnboardingStatus(onboardingCompleted);
 		memberRepository.save(member);
+	}
+
+	public MemberSearchResponseDto getMemberByEmail(String email) {
+		Optional<Member> existMember = memberRepository.findByEmail(email);
+		return existMember.map(MemberSearchResponseDto::fromEntity).orElse(null);
 	}
 }

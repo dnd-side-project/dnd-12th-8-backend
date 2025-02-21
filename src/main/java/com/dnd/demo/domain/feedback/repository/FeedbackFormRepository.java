@@ -1,10 +1,10 @@
 package com.dnd.demo.domain.feedback.repository;
 
 import com.dnd.demo.domain.feedback.entity.FeedbackForm;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -15,5 +15,8 @@ public interface FeedbackFormRepository extends MongoRepository<FeedbackForm, St
     List<FeedbackForm> findAllByProjectId(Long projectId);
 
     Optional<FeedbackForm> findByProjectId(Long projectId);
+
+    @Query("{ '_id': { $in: ?0 } }")
+    List<FeedbackForm> findByFeedbackFormIds(List<String> feedbackFormIds);
 
 }

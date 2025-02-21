@@ -30,7 +30,7 @@ public class FeedbackResponseService {
           request.projectId());
         if (feedbackForm.isPresent()) {
             FeedbackResponse feedbackResponse = request.toEntity(memberId,
-              feedbackForm.get().getFeedbackFormId());
+              feedbackForm.get().getId());
             feedbackResponseRepository.save(feedbackResponse);
 
             List<FeedbackAnswer> answers = feedbackResponse.getAnswers();
@@ -56,7 +56,7 @@ public class FeedbackResponseService {
 
                     FeedbackQuestionResult questionAnswer = feedbackQuestionResult.get();
                     questionAnswer.addQuestionResult(answer);
-            
+
                 }
                 feedbackResultRepository.save(feedbackResult);
             }

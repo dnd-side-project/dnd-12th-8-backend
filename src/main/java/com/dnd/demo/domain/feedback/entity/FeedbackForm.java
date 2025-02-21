@@ -1,15 +1,13 @@
 package com.dnd.demo.domain.feedback.entity;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import jakarta.persistence.Id;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "feedback_form")
 @Getter
@@ -18,12 +16,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FeedbackForm {
 
-	@Id
-	private String feedbackFormId;
+    @Id
+    private String id;
 
-	private Long projectId;
+    private Long projectId;
 
-	@Field("questions")
-	private List<FeedbackQuestion> questions;
+    @Field("questions")
+    private List<FeedbackQuestion> questions;
 
 }

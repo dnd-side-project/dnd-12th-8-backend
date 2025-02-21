@@ -20,4 +20,5 @@ public interface ProjectQueryDslRepository {
 
     Optional<Project> findLatestTemporaryProject(String memberId);
 
+	List<Long> findProjectIdsByCategoryIds(List<Long> categoryIds);
 }

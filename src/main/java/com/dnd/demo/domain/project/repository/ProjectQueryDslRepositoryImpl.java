@@ -1,5 +1,7 @@
 package com.dnd.demo.domain.project.repository;
 
+import static com.dnd.demo.domain.project.entity.QProjectCategory.*;
+
 import com.dnd.demo.domain.member.entity.Member;
 import com.dnd.demo.domain.member.entity.QFavorite;
 import com.dnd.demo.domain.member.entity.QMember;
@@ -163,4 +165,18 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
 
         return Optional.ofNullable(result);
     }
+
+    @Override
+    public List<Long> findProjectIdsByCategoryIds(List<Long> categoryIds) {
+        return queryFactory
+            .select(projectCategory.projectId)
+            .from(projectCategory)
+            .join(project).on(projectCategory.projectId.eq(project.projectId))
+            .where(
+                projectCategory.categoryId.in(categoryIds),
+                project.projectStatus.eq(ProjectStatus.OPEN)
+            )
+            .fetch();
+    }
+
 }

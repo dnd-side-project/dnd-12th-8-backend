@@ -29,6 +29,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dnd.demo.common.dto.ApiResponse;
+import com.dnd.demo.domain.member.dto.response.PointResponseDto;
+import com.dnd.demo.domain.project.dto.request.ProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
+import com.dnd.demo.domain.project.dto.response.AdvertisedProjectResponseDto;
+import com.dnd.demo.domain.project.dto.response.ProjectCategoryRecommendationResponseDto;
+import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
+import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
+import com.dnd.demo.domain.project.enums.Job;
+import com.dnd.demo.domain.project.service.ProjectService;
+import com.dnd.demo.global.auth.dto.OAuthUserDetails;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 @Tag(name = "프로젝트 API", description = "프로젝트 생성 및 임시 저장 API")
 @RequiredArgsConstructor
 @RestController
@@ -99,12 +116,20 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectDetail(projectId));
     }
 
-    @Operation(summary = "프로젝트 삭제", description = "특정 프로젝트를 삭제합니다.")
-    @DeleteMapping("/{projectId}")
-    public ResponseEntity<ApiResponse<Void>> deleteProject(
-      @PathVariable Long projectId,
-      @AuthenticationPrincipal OAuthUserDetails oAuthUserDetails) {
-        projectService.deleteProject(oAuthUserDetails.getMemberId(), projectId);
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 삭제 성공", null));
-    }
+	@Operation(summary = "프로젝트 삭제", description = "특정 프로젝트를 삭제합니다.")
+	@DeleteMapping("/{projectId}")
+	public ResponseEntity<ApiResponse<Void>> deleteProject(
+		@PathVariable Long projectId,
+		@AuthenticationPrincipal OAuthUserDetails oAuthUserDetails) {
+		projectService.deleteProject(oAuthUserDetails.getMemberId(), projectId);
+		return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "프로젝트 삭제 성공", null));
+	}
+
+	@Operation(summary = "연관 카테고리 프로젝트 조회", description = "특정 프로젝트와 같은 카테고리를 가진 프로젝트 목록 조회")
+	@GetMapping("/{projectId}/related")
+	public ResponseEntity<List<ProjectCategoryRecommendationResponseDto>> getRelatedProjects(
+		@PathVariable Long projectId) {
+		return ResponseEntity.ok(projectService.getRelatedProjects(projectId));
+	}
+
 }

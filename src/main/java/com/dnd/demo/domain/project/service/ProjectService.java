@@ -16,6 +16,7 @@ import com.dnd.demo.domain.project.dto.request.ProjectSaveRequest;
 import com.dnd.demo.domain.project.dto.request.TemporaryProjectCreateRequest;
 import com.dnd.demo.domain.project.dto.response.AdvertisedProjectResponseDto;
 import com.dnd.demo.domain.project.dto.response.PlatformCategoryResponse;
+import com.dnd.demo.domain.project.dto.response.ProjectCategoryRecommendationResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectDetailResponse;
 import com.dnd.demo.domain.project.dto.response.ProjectListResponseDto;
 import com.dnd.demo.domain.project.dto.response.ProjectResponseDto;
@@ -188,4 +189,17 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_FINAL_CREATE_ALREADY_UPLOAD);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<ProjectCategoryRecommendationResponseDto> getRelatedProjects(Long projectId) {
+        List<Long> categoryIds = projectCategoryService.getCategoryIdsByProjectId(projectId);
+        List<Long> relatedProjectIds = projectQueryDslRepository.findProjectIdsByCategoryIds(categoryIds);
+
+        List<Project> relatedProjects = projectRepository.findByProjectIdIn(relatedProjectIds);
+
+        return relatedProjects.stream()
+            .map(ProjectCategoryRecommendationResponseDto::from)
+            .toList();
+    }
+
 }

@@ -32,11 +32,11 @@ public record ProjectCreateRequest(
 	String logoImgUrl,
 
 	@NotBlank(message = "프로젝트 제목은 필수 입력 항목입니다.")
-	@Size(max = 100, message = "프로젝트 제목은 최대 100자까지 입력 가능합니다.")
+	@Size(max = 1000, message = "프로젝트 제목은 최대 1000자까지 입력 가능합니다.")
 	String title,
 
 	@NotBlank(message = "프로젝트 설명은 필수 입력 항목입니다.")
-	@Size(max = 1000, message = "프로젝트 설명은 최대 1000자까지 입력 가능합니다.")
+	@Size(max = 3000, message = "프로젝트 설명은 최대 3000자까지 입력 가능합니다.")
 	String description,
 
 	@NotBlank(message = "마감일은 필수 입력 항목입니다.")
@@ -64,7 +64,7 @@ public record ProjectCreateRequest(
 	@NotEmpty(message = "프로젝트 세부 정보는 최소 1개 이상 입력해야 합니다.")
 	List<@Valid ProjectDetailRequest> projectDetailRequests,
 
-	@NotEmpty(message = "사전 퀴즈는 최소 1개 이상 입력해야 합니다.")
+	// @NotEmpty(message = "사전 퀴즈는 최소 1개 이상 입력해야 합니다.")
 	List<@Valid QuizRequest> quizRequests,
 
 	@NotEmpty(message = "피드백 질문은 최소 1개 이상 입력해야 합니다.")

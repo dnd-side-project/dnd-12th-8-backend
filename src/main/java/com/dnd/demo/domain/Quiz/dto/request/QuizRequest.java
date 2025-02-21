@@ -10,7 +10,7 @@ import jakarta.validation.constraints.*;
 public record QuizRequest(
 	String question,
 
-	@Size(max = 4, message = "객관식 보기는 4개여야 합니다.")
+	@Size(max = 4, message = "객관식 보기는 최대 4개여야 합니다.")
 	List<String> options,
 
 	String answer

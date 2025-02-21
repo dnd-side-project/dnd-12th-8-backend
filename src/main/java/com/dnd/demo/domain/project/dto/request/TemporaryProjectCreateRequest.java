@@ -9,6 +9,7 @@ import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.enums.Level;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -25,10 +26,10 @@ public record TemporaryProjectCreateRequest(
 	)
 	String logoImgUrl,
 
-	@Size(max = 100, message = "프로젝트 제목은 최대 100자까지 입력 가능합니다.")
+	@Size(max = 1000, message = "프로젝트 제목은 최대 1000자까지 입력 가능합니다.")
 	String title,
 
-	@Size(max = 1000, message = "프로젝트 설명은 최대 1000자까지 입력 가능합니다.")
+	@Size(max = 3000, message = "프로젝트 설명은 최대 3000자까지 입력 가능합니다.")
 	String description,
 
 	String dueDate,

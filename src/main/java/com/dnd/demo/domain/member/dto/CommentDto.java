@@ -9,9 +9,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CommentDto {
-    
+
     private String memberName;
     private Job job;
     private Level level;
     private String content;
+    private String profileUrl;
 }

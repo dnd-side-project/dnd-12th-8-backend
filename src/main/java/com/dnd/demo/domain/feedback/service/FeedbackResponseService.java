@@ -10,6 +10,8 @@ import com.dnd.demo.domain.feedback.entity.feedbackresult.FeedbackQuestionResult
 import com.dnd.demo.domain.feedback.repository.FeedbackFormRepository;
 import com.dnd.demo.domain.feedback.repository.FeedbackResponseRepository;
 import com.dnd.demo.domain.feedback.repository.FeedbackResultRepository;
+import com.dnd.demo.global.exception.CustomException;
+import com.dnd.demo.global.exception.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,44 +28,38 @@ public class FeedbackResponseService {
 
     @Transactional
     public String save(String memberId, FeedbackResponseRequest request) {
-        Optional<FeedbackForm> feedbackForm = feedbackFormRepository.findByProjectId(
-          request.projectId());
-        if (feedbackForm.isPresent()) {
-            FeedbackResponse feedbackResponse = request.toEntity(memberId,
-              feedbackForm.get().getId());
-            feedbackResponseRepository.save(feedbackResponse);
+        FeedbackForm feedbackForm = feedbackFormRepository.findByProjectId(request.projectId())
+          .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_FORM_NOT_FOUND));
 
-            List<FeedbackAnswer> answers = feedbackResponse.getAnswers();
+        FeedbackResponse feedbackResponse = request.toEntity(memberId,
+          feedbackForm.getId());
+        feedbackResponseRepository.save(feedbackResponse);
 
-            // 결과 변경
-            Optional<FeedbackResult> existFeedbackResult = feedbackResultRepository.findByProjectId(
-              request.projectId());
-            if (existFeedbackResult.isPresent()) {
+        List<FeedbackAnswer> answers = feedbackResponse.getAnswers();
 
-                FeedbackResult feedbackResult = existFeedbackResult.get();
-                feedbackResult.setTotalResponseCount(feedbackResult.getTotalResponseCount() + 1);
+        FeedbackResult feedbackResult = feedbackResultRepository.findByProjectId(
+            request.projectId())
+          .orElseThrow(() -> new CustomException(ErrorCode.FEEDBACK_RESULT_NOT_FOUND));
 
-                for (FeedbackAnswer answer : answers) {
-                    Optional<FeedbackQuestionResult> feedbackQuestionResult = feedbackResult.getFeedbackQuestionResult()
-                      .stream()
-                      .filter(questionAnswer -> answer.getQuestionId()
-                        .equals(questionAnswer.getQuestionId()))
-                      .findFirst();
+        feedbackResult.setTotalResponseCount(feedbackResult.getTotalResponseCount() + 1);
 
-                    if (feedbackQuestionResult.isEmpty()) {
-                        continue;
-                    }
+        for (FeedbackAnswer answer : answers) {
+            Optional<FeedbackQuestionResult> feedbackQuestionResult = feedbackResult.getFeedbackQuestionResult()
+              .stream()
+              .filter(
+                questionAnswer -> answer.getQuestionId().equals(questionAnswer.getQuestionId()))
+              .findFirst();
 
-                    FeedbackQuestionResult questionAnswer = feedbackQuestionResult.get();
-                    questionAnswer.addQuestionResult(answer);
-
-                }
-                feedbackResultRepository.save(feedbackResult);
+            if (feedbackQuestionResult.isEmpty()) {
+                throw new CustomException(ErrorCode.INVALID_FEEDBACK_QUESTION_ID);
             }
-            return feedbackResponse.getId();
-        } else {
-            return null;
+
+            FeedbackQuestionResult questionAnswer = feedbackQuestionResult.get();
+            questionAnswer.addQuestionResult(answer);
         }
+
+        feedbackResultRepository.save(feedbackResult);
+        return feedbackResponse.getId();
     }
 
     public FeedbackResultResponse getFeedbackResult(Long projectId) {

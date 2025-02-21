@@ -40,23 +40,36 @@ public class MyPageServiceImpl implements MyPageService {
     @Override
     public List<MyPageProjectResponseDto> getMyPageProjectList(String memberId) {
         return projectRepository.findByMemberId(memberId)
-            .stream().map(MyPageProjectResponseDto::fromProject)
+            .stream()
+            .map(project -> {
+                PlatformCategoryResponse categoryInfo = projectCategoryService.getCategoryInfoByProjectId(project.getProjectId());
+                return MyPageProjectResponseDto.fromProject(project, categoryInfo);
+            })
             .toList();
     }
 
     @Override
     public List<MyPageProjectResponseDto> getMyPageFavoriteList(String memberId) {
         return projectQueryDslRepository.findFavoriteProjectListByProjectId(memberId)
-            .stream().map(MyPageProjectResponseDto::fromProject)
+            .stream()
+            .map(project -> {
+                PlatformCategoryResponse categoryInfo = projectCategoryService.getCategoryInfoByProjectId(project.getProjectId());
+                return MyPageProjectResponseDto.fromProject(project, categoryInfo);
+            })
             .toList();
     }
 
     @Override
     public List<MyPageProjectResponseDto> getMyPageTempProjectList(String memberId) {
         return projectRepository.findByMemberIdAndProjectStatus(memberId, ProjectStatus.TEMPORARY)
-            .stream().map(MyPageProjectResponseDto::fromProject)
+            .stream()
+            .map(project -> {
+                PlatformCategoryResponse categoryInfo = projectCategoryService.getCategoryInfoByProjectId(project.getProjectId());
+                return MyPageProjectResponseDto.fromProject(project, categoryInfo);
+            })
             .toList();
     }
+
 
     @Override
     @Transactional(readOnly = true)

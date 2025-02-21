@@ -24,7 +24,9 @@ public enum ErrorCode {
     PROJECT_NOT_OPEN(BAD_REQUEST,"프로젝트가 OPEN 상태가 아닙니다"),
 
     //FeedbackForm
-    FEEDBACK_FORM(NOT_FOUND,"피드팩 폼이 존재하지 않습니다"),
+    FEEDBACK_FORM_NOT_FOUND(NOT_FOUND,"해당 프로젝트 ID에 대한 피드팩 폼이 존재하지 않습니다"),
+    FEEDBACK_RESULT_NOT_FOUND(NOT_FOUND, "해당 프로젝트에 제출된 피드백 결과가 없습니다."),
+    INVALID_FEEDBACK_QUESTION_ID(BAD_REQUEST, "해당 피드백 폼 내에 존재하지 않는 questionId가 포함되어 있습니다"),
 
     INVALID_IMAGE_TYPE(BAD_REQUEST, " 올바르지 않은 이미지 확장자 파일입니다."),
 

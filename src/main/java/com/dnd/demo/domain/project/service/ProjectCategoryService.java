@@ -12,6 +12,8 @@ import com.dnd.demo.domain.project.dto.response.PlatformCategoryResponse;
 import com.dnd.demo.domain.project.entity.Category;
 import com.dnd.demo.domain.project.entity.Project;
 import com.dnd.demo.domain.project.entity.ProjectCategory;
+import com.dnd.demo.domain.project.enums.PlatformType;
+import com.dnd.demo.domain.project.repository.CategoryRepository;
 import com.dnd.demo.domain.project.repository.ProjectCategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class ProjectCategoryService {
 
 	private final ProjectCategoryRepository projectCategoryRepository;
 	private final CategoryService categoryService;
+	private final CategoryRepository categoryRepository;
 
 	@Transactional
 	public void saveByProjectId(Project project, PlatformCategoryRequest platformCategoryRequest) {
@@ -48,6 +51,13 @@ public class ProjectCategoryService {
 
 		List<Category> categories = categoryService.getCategoriesByIds(categoryIds);
 
+		return PlatformCategoryResponse.from(categories);
+	}
+
+	@Transactional(readOnly = true)
+	public PlatformCategoryResponse getCategoryInfoByProjectId(Long projectId) {
+		List<Long> categoryIds = projectCategoryRepository.findCategoryIdsByProjectId(projectId);
+		List<Category> categories = categoryRepository.findByCategoryIdIn(categoryIds);
 		return PlatformCategoryResponse.from(categories);
 	}
 }

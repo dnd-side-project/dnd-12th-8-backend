@@ -155,6 +155,7 @@ public class ProjectService {
     @Transactional
     public void clearProjectData(Project project) {
         projectCategoryService.deleteByProjectId(project);
+        advertisementService.deleteByProjectId(project);
         projectDetailService.deleteByProjectId(project);
         List<Quiz> deletedQuizzes = quizService.deleteByProjectId(project);
         quizOptionService.deleteByQuizIds(deletedQuizzes);

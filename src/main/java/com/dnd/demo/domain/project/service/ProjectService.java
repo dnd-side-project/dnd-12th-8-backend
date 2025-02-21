@@ -193,13 +193,15 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectCategoryRecommendationResponseDto> getRelatedProjects(Long projectId) {
         List<Long> categoryIds = projectCategoryService.getCategoryIdsByProjectId(projectId);
-        List<Long> relatedProjectIds = projectQueryDslRepository.findProjectIdsByCategoryIds(categoryIds);
+        List<Long> relatedProjectIds = projectQueryDslRepository.findProjectIdsByCategoryIds(
+          categoryIds);
+        relatedProjectIds.remove(projectId);
 
         List<Project> relatedProjects = projectRepository.findByProjectIdIn(relatedProjectIds);
 
         return relatedProjects.stream()
-            .map(ProjectCategoryRecommendationResponseDto::from)
-            .toList();
+          .map(ProjectCategoryRecommendationResponseDto::from)
+          .toList();
     }
 
 }

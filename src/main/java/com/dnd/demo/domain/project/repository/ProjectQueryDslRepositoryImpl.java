@@ -12,7 +12,10 @@ import com.dnd.demo.domain.project.entity.QProjectCategory;
 import com.dnd.demo.domain.project.enums.Job;
 import com.dnd.demo.domain.project.enums.ProjectStatus;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -110,14 +113,13 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
 
     @Override
     public Page<Project> searchProjects(String query, Job job, List<Long> categoryIds,
-      Pageable pageable) {
+        Pageable pageable) {
         BooleanBuilder where = new BooleanBuilder();
-
         where.and(QProject.project.projectStatus.eq(ProjectStatus.OPEN));
 
         if (query != null && !query.isBlank()) {
             where.and(QProject.project.title.containsIgnoreCase(query)
-              .or(QProject.project.description.containsIgnoreCase(query)));
+                .or(QProject.project.description.containsIgnoreCase(query)));
         }
 
         if (job != null) {
@@ -128,21 +130,38 @@ public class ProjectQueryDslRepositoryImpl implements ProjectQueryDslRepository 
             where.and(QProjectCategory.projectCategory.categoryId.in(categoryIds));
         }
 
-        List<Project> projects = queryFactory
-          .selectFrom(QProject.project)
-          .leftJoin(QProjectCategory.projectCategory)
-          .on(QProject.project.projectId.eq(QProjectCategory.projectCategory.projectId))
-          .where(where)
-          .orderBy(
-            QProject.project.dueDate.asc(),
-            QProject.project.createdAt.desc()
-          )
-          .offset(pageable.getOffset())
-          .limit(pageable.getPageSize())
-          .fetch();
+        //서브쿼리에서 먼저 project_id 조회
+        List<Long> projectIds = queryFactory
+            .select(QProject.project.projectId)
+            .from(QProject.project)
+            .where(where)
+            .orderBy(QProject.project.dueDate.asc(), QProject.project.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-        return new PageImpl<>(projects, pageable, projects.size());
+        if (projectIds.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+
+        //서브쿼리 결과를 활용하여 실제 프로젝트 데이터 조회
+        List<Project> projects = queryFactory
+            .selectFrom(QProject.project)
+            .where(QProject.project.projectId.in(projectIds))
+            .fetch();
+
+        //전체 데이터 개수 조회
+        Long total = queryFactory
+            .select(QProject.project.projectId.countDistinct())
+            .from(QProject.project)
+            .leftJoin(QProjectCategory.projectCategory)
+            .on(QProject.project.projectId.eq(QProjectCategory.projectCategory.projectId))
+            .where(where)
+            .fetchOne();
+
+        return new PageImpl<>(projects, pageable, Optional.ofNullable(total).orElse(0L));
     }
+
 
     private List<Long> getCategoryIds(String memberId) {
         return queryFactory

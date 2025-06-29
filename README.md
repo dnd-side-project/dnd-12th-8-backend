@@ -44,7 +44,8 @@
 
 ## **✍🏻 협업 제약조건**
 
-- [Github-flow]에 따라 프로젝트에 대해 공동 작업을 수행합니다.(https://docs.github.com/ko/get-started/quickstart/github-flow)
+- [Github-flow]에 따라 프로젝트에 대해 공동 작업을 수행합니다.
+  - (https://docs.github.com/ko/get-started/quickstart/github-flow)
 - 코드리뷰가 끝난 작업은 반드시 상대 팀원의 APPROVE가 있어야 MERGE가 가능합니다.
 - 이슈는 최대한 작은 작업 단위로 생성하고 추후 진행할 기능에 대해서는 반드시 팀원과 협의합니다.
 
